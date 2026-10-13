@@ -41,16 +41,19 @@ gpu_udev_rules() {
   printf 'KERNEL=="card*", KERNELS=="%s", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/dgpu"\n' "$2"
 }
 
-# gpu_lua KIND -> ~/.config/hypr/gpu.lua for this machine.
-gpu_lua() {
-  echo "-- Written by fedora-hyprland/install.sh for this machine's NVIDIA GPU ($1). Regenerated on every run."
+GPU_ENV_FILE="$HOME/.config/environment.d/60-fedora-hyprland-gpu.conf"
+
+# gpu_env KIND -> environment.d file for this machine. systemd's user manager reads it, so it reaches Hyprland
+# (started by uwsm as a user unit) and every app started with `uwsm app`.
+gpu_env() {
+  echo "# Written by fedora-hyprland/install.sh for this machine's NVIDIA GPU ($1). Regenerated on every run."
   if [[ "$1" == hybrid ]]; then
-    echo '-- Render on the integrated GPU to save battery; start an app on the NVIDIA GPU with: nvidia-run <app>'
-    echo 'hl.env("AQ_DRM_DEVICES", "/dev/dri/igpu:/dev/dri/dgpu")'
+    echo '# Render on the integrated GPU to save battery; start an app on the NVIDIA GPU with: nvidia-run <app>'
+    echo 'AQ_DRM_DEVICES=/dev/dri/igpu:/dev/dri/dgpu'
   else
-    echo 'hl.env("LIBVA_DRIVER_NAME", "nvidia")'
-    echo 'hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")'
-    echo 'hl.env("NVD_BACKEND", "direct")'
+    echo 'LIBVA_DRIVER_NAME=nvidia'
+    echo '__GLX_VENDOR_LIBRARY_NAME=nvidia'
+    echo 'NVD_BACKEND=direct'
   fi
 }
 
@@ -72,10 +75,15 @@ EOF
   sudo mokutil --import "$NVIDIA_KEY"
 }
 
-# Build the module now (not in the background), so a reboot never lands on a missing driver.
+# Build the module now (not in the background) for the newest installed kernel, which is the one the next boot
+# uses, so a reboot never lands on a missing driver. --force retries a build that failed on an earlier run.
 nvidia_build() {
-  sudo akmods --kernels "$(uname -r)"
-  modinfo -F version nvidia >/dev/null 2>&1 ||
+  local kernel
+  kernel=$(rpm -q kernel --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' | newest_version)
+  modinfo -k "$kernel" -F version nvidia >/dev/null 2>&1 && return 0
+  sudo dnf install -y "kernel-devel-$kernel"
+  sudo akmods --force --kernels "$kernel"
+  modinfo -k "$kernel" -F version nvidia >/dev/null 2>&1 ||
     die "The NVIDIA kernel module didn't build. Don't reboot yet: check $LOG_FILE and https://rpmfusion.org/Howto/NVIDIA"
 }
 
@@ -108,7 +116,7 @@ setup_nvidia() {
   fi
   nvidia_build
   sudo systemctl enable nvidia-suspend nvidia-resume nvidia-hibernate
-  mkdir -p "$HOME/.config/hypr"
-  gpu_lua "$kind" >"$HOME/.config/hypr/gpu.lua"
+  mkdir -p "$(dirname "$GPU_ENV_FILE")"
+  gpu_env "$kind" >"$GPU_ENV_FILE"
   if [[ "$kind" == hybrid ]]; then nvidia_hybrid "$gpus"; fi
 }

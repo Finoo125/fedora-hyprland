@@ -7,18 +7,15 @@ source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../lib/common.sh"
 log "System packages (snapper takes a snapshot before and after)"
 sudo dnf upgrade --refresh -y
 
-if rpm -q akmod-nvidia >/dev/null 2>&1; then
-  log "NVIDIA module for the newest kernel"
-  sudo akmods --kernels "$(rpm -q kernel --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' | newest_version)"
-fi
-
 log "Flatpak apps"
 sudo flatpak update -y --noninteractive
 
 log "Firmware"
 fwupdmgr refresh --force >/dev/null 2>&1 || true
-fwupdmgr update -y || echo "No firmware updates."
+fwupdmgr update -y --no-reboot-check || echo "No firmware updates."
 
+# install.sh also builds the NVIDIA module for a new kernel, if this machine uses one.
 log "fedora-hyprland defaults"
 git -C "$REPO_DIR" pull --ff-only
 "$REPO_DIR/install.sh"
+log "If firmware or the kernel was updated, reboot to finish: systemctl reboot"

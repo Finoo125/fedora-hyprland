@@ -28,7 +28,22 @@ rules=$(gpu_udev_rules 0000:00:02.0 0000:01:00.0)
 assert_true "udev rule for the iGPU symlink" grep -qF 'KERNEL=="card*", KERNELS=="0000:00:02.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/igpu"' <<<"$rules"
 assert_true "udev rule for the dGPU symlink" grep -qF 'KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/dgpu"' <<<"$rules"
 
-assert_true  "hybrid renders on the iGPU"      grep -qF 'hl.env("AQ_DRM_DEVICES", "/dev/dri/igpu:/dev/dri/dgpu")' <<<"$(gpu_lua hybrid)"
-assert_false "hybrid doesn't force GLX nvidia" grep -qF '__GLX_VENDOR_LIBRARY_NAME' <<<"$(gpu_lua hybrid)"
-assert_true  "dedicated sets VA-API to nvidia" grep -qF 'hl.env("LIBVA_DRIVER_NAME", "nvidia")' <<<"$(gpu_lua dedicated)"
+# environment.d reaches Hyprland (a uwsm user unit) and every app started with `uwsm app`.
+assert_true  "hybrid renders on the iGPU"      grep -qx 'AQ_DRM_DEVICES=/dev/dri/igpu:/dev/dri/dgpu' <<<"$(gpu_env hybrid)"
+assert_false "hybrid doesn't force GLX nvidia" grep -qF '__GLX_VENDOR_LIBRARY_NAME' <<<"$(gpu_env hybrid)"
+assert_true  "dedicated sets VA-API to nvidia" grep -qx 'LIBVA_DRIVER_NAME=nvidia' <<<"$(gpu_env dedicated)"
+
+# Module build: for the newest installed kernel (the one the next boot uses), with its headers, and retried with --force.
+calls=(); module_ok=no
+rpm() { printf '6.19.8-300.fc44.x86_64\n7.0.2-200.fc44.x86_64\n'; }
+modinfo() { [[ $module_ok == yes ]]; }
+sudo() { calls+=("$*"); if [[ "$1" == akmods ]]; then module_ok=yes; fi; }
+nvidia_build
+built=$(printf '%s\n' "${calls[@]}")
+assert_true "headers for the newest kernel are installed" grep -qx 'dnf install -y kernel-devel-7.0.2-200.fc44.x86_64' <<<"$built"
+assert_true "module is force-built for the newest kernel" grep -qx 'akmods --force --kernels 7.0.2-200.fc44.x86_64' <<<"$built"
+calls=()
+nvidia_build
+assert_eq "" "${calls[*]}" "an existing module isn't rebuilt on every run"
+unset -f rpm modinfo sudo
 finish

@@ -91,7 +91,7 @@ If the portrait monitor shows the picture upside down, override its rotation wit
 
 | Yours (created once, never overwritten) | Regenerated on every install.sh run |
 |---|---|
-| `~/.config/hypr/hyprland.lua` (put overrides at the bottom) | `~/.config/hypr/gpu.lua` (NVIDIA only) |
+| `~/.config/hypr/hyprland.lua` (put overrides at the bottom) | `~/.config/environment.d/60-fedora-hyprland-gpu.conf` (NVIDIA only) |
 | `~/.config/ghostty/config`, `~/.config/gtk-*/settings.ini`, `~/.config/qt6ct/qt6ct.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
 | `~/.config/mimeapps.list`, `~/.config/uwsm/env` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
 | any other `~/.config/noctalia/*.toml`, and everything you change in Noctalia's Settings | |

@@ -11,16 +11,17 @@ function M.is_external(name)
   return not (name:match("^eDP") or name:match("^FALLBACK") or name:match("^HEADLESS"))
 end
 
--- The laptop panel is on only while no external monitor is connected.
-function M.internal_enabled(monitors)
+-- The laptop panel is on only while no external monitor is connected. `gone` is a monitor being removed,
+-- ignored in case Hyprland still lists it when the event fires.
+function M.internal_enabled(monitors, gone)
   for _, m in ipairs(monitors) do
-    if M.is_external(m.name) then return false end
+    if M.is_external(m.name) and m.name ~= gone then return false end
   end
   return true
 end
 
-function M.apply()
-  local on = M.internal_enabled(hl.get_monitors())
+function M.apply(removed)
+  local on = M.internal_enabled(hl.get_monitors(), removed and removed.name)
   for _, m in ipairs(hl.get_monitors({ all = true })) do
     if m.name:match("^eDP") then
       if on then
@@ -33,8 +34,8 @@ function M.apply()
 end
 
 -- Event driven: runs the moment a monitor is plugged in or out.
-hl.on("hyprland.start", M.apply)
-hl.on("monitor.added", M.apply)
-hl.on("monitor.removed", M.apply)
+hl.on("hyprland.start", function() M.apply() end)
+hl.on("monitor.added", function() M.apply() end)
+hl.on("monitor.removed", function(m) M.apply(m) end)
 
 return M

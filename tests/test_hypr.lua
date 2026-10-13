@@ -54,6 +54,15 @@ mon.apply()
 check(calls.monitors[1].output == "eDP-1" and not calls.monitors[1].disabled, "undocked: apply() enables eDP-1")
 check(calls.events["monitor.added"] and calls.events["monitor.removed"], "dock handling runs on hotplug events")
 
+-- The removed monitor may still be listed when monitor.removed fires: it must not keep the panel off.
+state.active = { { name = "DP-5", description = "HP Inc. HP X27i" } }
+calls.monitors = {}
+calls.events["monitor.removed"][1]({ name = "DP-5", description = "HP Inc. HP X27i" })
+check(calls.monitors[1].output == "eDP-1" and not calls.monitors[1].disabled, "unplugging the last monitor turns the panel on even if it's still listed")
+calls.monitors = {}
+calls.events["monitor.added"][1]({ name = "DP-5", description = "HP Inc. HP X27i" })
+check(calls.monitors[1].output == "eDP-1" and calls.monitors[1].disabled == true, "plugging in a monitor turns the panel off")
+
 -- desks.lua
 local desks = dofile("config/hypr/desks.lua")
 check(same(desks.focus_order(2, true), { 12, 2 }), "docked desk 2: portrait 12 first, main 2 last (focus ends on main)")
@@ -72,6 +81,17 @@ calls.dispatched = {}
 calls.binds["SUPER + code:11"]()
 check(#calls.dispatched == 2 and calls.dispatched[1].args.workspace == "12" and calls.dispatched[2].args.workspace == "2",
   "Super+2 switches portrait to 12, then main to 2")
+
+-- Undock: the portrait monitor's removal moves its windows, even if it is still listed when the event fires.
+state.windows = { { address = "0xa", workspace = { id = 12 } } }
+calls.dispatched = {}
+local undock = calls.events["monitor.removed"][#calls.events["monitor.removed"]]
+undock({ name = "DP-6", description = "HP Inc. HP E27q G5 CNC42511SG" })
+check(#calls.dispatched == 1 and calls.dispatched[1].args.window == "address:0xa" and calls.dispatched[1].args.workspace == "2",
+  "removing the portrait monitor moves its windows to the main desks")
+calls.dispatched = {}
+undock({ name = "DP-5", description = "HP Inc. HP X27i" })
+check(#calls.dispatched == 0, "removing another monitor moves nothing")
 
 local rule_for_11
 for _, r in ipairs(calls.rules) do if r.workspace == "11" then rule_for_11 = r end end

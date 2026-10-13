@@ -9,6 +9,9 @@ greeter_session() {
   if [[ -f "$1/hyprland-uwsm.desktop" ]]; then echo hyprland-uwsm; else echo hyprland; fi
 }
 
+# greeter_cmd -> full path of the greeter's session wrapper; fails if it's missing (never an empty greetd command).
+greeter_cmd() { command -v noctalia-greeter-session; }
+
 # greetd_config GREETER_CMD -> /etc/greetd/config.toml. Fedora's greetd runs greeters as user "greetd".
 greetd_config() {
   cat <<EOF
@@ -41,9 +44,10 @@ EOF
 }
 
 setup_greeter() {
-  local kb wall="" src
+  local kb wall="" src cmd
+  cmd=$(greeter_cmd) || die "noctalia-greeter-session not found, so the login screen would not start. Is Terra's noctalia-greeter installed?"
   kb=$(kb_from_localectl "$(localectl status)")
-  write_root /etc/greetd/config.toml "$(greetd_config "$(command -v noctalia-greeter-session)")"
+  write_root /etc/greetd/config.toml "$(greetd_config "$cmd")"
   # The greeter package's tmpfiles entry assumes a "greeter" user; Fedora's greetd user is "greetd".
   write_root /etc/tmpfiles.d/noctalia-greeter.conf "d $GREETER_DIR 0750 greetd greetd -"
   sudo systemd-tmpfiles --create /etc/tmpfiles.d/noctalia-greeter.conf

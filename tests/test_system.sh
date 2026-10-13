@@ -11,6 +11,11 @@ assert_eq "hyprland" "$(greeter_session "$tmp")" "plain Hyprland session when uw
 touch "$tmp/hyprland-uwsm.desktop"
 assert_eq "hyprland-uwsm" "$(greeter_session "$tmp")" "uwsm-managed session is preferred"
 
+mkdir -p "$tmp/bin" "$tmp/nobin"
+printf '#!/bin/sh\n' >"$tmp/bin/noctalia-greeter-session"; chmod +x "$tmp/bin/noctalia-greeter-session"
+assert_eq "$tmp/bin/noctalia-greeter-session" "$(PATH="$tmp/bin" greeter_cmd)" "greeter wrapper is found on PATH"
+PATH="$tmp/nobin" assert_false "a missing greeter wrapper is an error, never an empty command" greeter_cmd
+
 conf=$(greetd_config /usr/bin/noctalia-greeter-session)
 assert_true "greetd starts the greeter session wrapper" grep -qx 'command = "/usr/bin/noctalia-greeter-session"' <<<"$conf"
 assert_true "greetd uses Fedora's greetd user"         grep -qx 'user = "greetd"' <<<"$conf"

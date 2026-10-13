@@ -18,5 +18,6 @@ assert_true  "hyprland is in the list"        grep -qx hyprland <<<"$all"
 assert_true  "noctalia is in the list"        grep -qx noctalia <<<"$all"
 assert_true  "NVIDIA packages are checked too" grep -qx akmod-nvidia <<<"$all"
 assert_false "cliphist is not needed"         grep -qx cliphist <<<"$all"
+assert_true  "dconf is installed so gsettings really saves" grep -qx dconf <<<"$all"
 assert_eq "$(sort <<<"$all" | uniq -d)" "" "no package is listed twice"
 finish

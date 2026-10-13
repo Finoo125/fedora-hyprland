@@ -49,8 +49,9 @@ for n = 1, 4 do
   end)
 end
 
-hl.on("monitor.removed", function()
-  if portrait_connected() then return end
+-- Decided by the removed monitor itself, in case Hyprland still lists it when the event fires.
+hl.on("monitor.removed", function(m)
+  if not (m and m.description and m.description:find(PORTRAIT_MODEL, 1, true)) then return end
   for _, s in ipairs(M.strays(hl.get_windows())) do
     hl.dispatch(hl.dsp.window.move({ window = "address:" .. s.address, workspace = tostring(s.workspace), follow = false }))
   end
