@@ -25,6 +25,9 @@ main() {
   exec > >(tee -a "$LOG_FILE") 2>&1
   trap 'warn "Stopped at line $LINENO. Full log: $LOG_FILE. Fix the problem and run ./install.sh again; finished steps are skipped."' ERR
   preflight
+  log "Repositories";        setup_repos
+  log "Packages";            install_packages
+  log "Flatpak apps";        install_flatpaks
   log "Done. Reboot to start Hyprland: systemctl reboot"
 }
 

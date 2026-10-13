@@ -11,3 +11,10 @@ jobs:
         run: shellcheck install.sh lib/*.sh tests/*.sh
       - name: bash unit tests
         run: bash tests/run.sh
+  packages:
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every package and Flatpak exists
+        run: bash tests/repoquery.sh
