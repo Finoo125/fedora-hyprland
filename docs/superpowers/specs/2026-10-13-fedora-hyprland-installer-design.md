@@ -74,7 +74,7 @@ references only (its files are GPL-1.0-only; we don't copy them).
 | Fedora 44 | everything possible, incl. `noctalia` 5.2.x |
 | RPM Fusion free + nonfree | ffmpeg, codecs, `intel-media-driver`, `steam` |
 | COPR `lionheartp/Hyprland` | `hyprland` (0.56.x), `xdg-desktop-portal-hyprland`, `uwsm`, `hyprpicker`, `nwg-look` (Hyprland is no longer in Fedora's official repos after F42) |
-| Terra, limited via `includepkgs=noctalia-greeter* ghostty*` | stable `noctalia-greeter`, `ghostty`; nothing else from Terra can replace Fedora packages. Terra's extra repos stay disabled. |
+| Terra, limited via `includepkgs=noctalia-greeter* ghostty* bibata-cursor-theme*` | stable `noctalia-greeter`, `ghostty`, Bibata cursor; nothing else from Terra can replace Fedora packages. Terra's extra repos stay disabled. |
 | Docker CE repo | `docker-ce`, `docker-ce-cli`, `containerd.io`, `docker-buildx-plugin`, `docker-compose-plugin` |
 | Microsoft VS Code repo | `code` |
 | Flathub (system remote) | GUI apps below |
@@ -83,7 +83,7 @@ references only (its files are GPL-1.0-only; we don't copy them).
 
 | Group | Packages |
 |---|---|
-| Desktop core | hyprland, uwsm, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, noctalia, greetd, noctalia-greeter, pipewire, pipewire-pulseaudio, wireplumber, bluez, NetworkManager-wifi, nm-connection-editor, tuned-ppd, upower, gnome-keyring, ddcutil, bolt, qt5-qtwayland, qt6-qtwayland, qt6ct, nwg-look, adw-gtk3-theme, xsettingsd, Noto + JetBrains Mono fonts, adwaita-cursor-theme (Bibata isn't packaged for Fedora), wl-clipboard, cliphist, grim, slurp, hyprpicker, xdg-user-dirs, xdg-utils |
+| Desktop core | hyprland, uwsm, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, noctalia, greetd, noctalia-greeter, pipewire, pipewire-pulseaudio, wireplumber, bluez, NetworkManager-wifi, nm-connection-editor, tuned-ppd, upower, gnome-keyring, ddcutil, bolt, qt5-qtwayland, qt6-qtwayland, qt6ct, nwg-look, adw-gtk3-theme, papirus-icon-theme, bibata-cursor-theme, librsvg2-tools, xsettingsd, Noto + JetBrains Mono fonts, wl-clipboard, cliphist, grim, slurp, hyprpicker, xdg-user-dirs, xdg-utils |
 | Apps | ghostty, Thunar, thunar-archive-plugin, thunar-volman, tumbler, ffmpegthumbnailer, gvfs, gvfs-mtp, gvfs-smb, file-roller, firefox, mpv, qview, papers, gnome-text-editor, gnome-calculator, gnome-software, kde-connect |
 | CLI | git, wget, curl, fastfetch, btop, bat, eza, fzf, ripgrep, fd-find, zoxide, unzip, p7zip, bash-completion, plocate |
 | Multimedia | full `ffmpeg` (swap from ffmpeg-free), `@multimedia` group, intel-media-driver, libva-utils |
@@ -170,7 +170,7 @@ Calibration knobs: `transform` (3 vs 1) and vertical alignment (top-aligned, as 
 
 - Workspaces **1–4** live on the main monitor (HP X27i), **11–14** on the portrait monitor (HP E27q G5).
 - `Super+N` (N = 1..4) switches both: workspace `10+N` on the portrait monitor, then `N` on the main monitor (focus ends on main).
-- `Super+Shift+N` moves the focused window to desk N on the monitor it's on.
+- `Super+Shift+N` moves the focused window to desk N on the monitor it's on. (Keys: see the keybind table; this deviates from CachyOS.)
 - Undocked: `Super+N` switches only the laptop screen; on `monitor.removed`, windows from `10+N` move to `N` so nothing gets stranded.
 
 ### Layout
@@ -180,25 +180,58 @@ Master layout, no hard window limit (extra windows stack into the secondary colu
 - main monitor and laptop screen: master left, stack right → 1 left, 2 stacked right;
 - portrait monitor: master on top, stack below → 1 top, 1 bottom.
 
-### Keybinds (Super = main modifier)
+### Keybinds (CachyOS `cachyos-hypr-noctalia` set, Super = main modifier)
+
+Same bindings as CachyOS, re-implemented (not copied). Digits are bound by keycode (`code:10`…), so they work on any keyboard layout.
+Apps launch through `uwsm app --`.
 
 | Keys | Action |
 |---|---|
-| Super+Return | ghostty |
-| Super+E | Thunar |
-| Super+Space | Noctalia launcher |
-| Super+S | Noctalia control center |
-| Super+, | Noctalia settings |
-| Alt+Tab | Noctalia window switcher |
-| Super+Q | close window |
-| Super+F / Super+V | fullscreen / toggle floating |
-| Super+arrows, Super+Shift+arrows | move focus / move window |
-| Super+1..4, Super+Shift+1..4 | linked desks (above) |
-| Super+L | lock (`noctalia msg session lock`) |
-| Print / Super+Print | screenshot region / full (grim + slurp → clipboard + ~/Pictures/Screenshots) |
-| Media, volume, brightness keys | `noctalia msg …` (volume-up/down/mute, brightness-up/down) |
+| Super+Return / E / W / T / C | ghostty / Thunar / Firefox / gnome-text-editor / gnome-calculator |
+| Super+Q, Super+Escape | close window, `hyprctl kill` |
+| Super+F, Super+D, Super+Alt+Space, Super+J | fullscreen, maximize, toggle floating, toggle split |
+| Super+arrows, Super+Shift+arrows | move focus, move window |
+| Alt+Tab, Super+Tab | cycle windows, Noctalia window switcher |
+| Super+Space, Super+. | launcher, emoji picker |
+| Super+X, Super+Z, Super+A | control center, settings, notifications |
+| Super+V, Super+P | clipboard history, color picker (hyprpicker) |
+| Super+L, Super+Alt+C | lock, session menu |
+| Print / Super+Print | region / full screenshot (`noctalia msg screenshot-region` / `screenshot-fullscreen`) |
+| Super+Shift+W | wallpaper panel |
+| Super+S, Super+Shift+S | toggle scratchpad, move window to scratchpad |
+| Ctrl+Shift+Escape | btop in ghostty |
+| Super+Minus / Plus | cursor zoom |
+| Super+mouse left / right drag | move / resize window |
+| Media, volume, mic, brightness keys | `noctalia msg …`, also on the lock screen |
+
+**Deviation from CachyOS, for the linked desks:**
+
+| Keys | Action |
+|---|---|
+| Super+1..4 | switch linked desk (both monitors) |
+| Super+Shift+1..4 | move window to desk N on its monitor |
+| Super+Alt+1 / 2 | focus portrait / main monitor (CachyOS has this on Super+1/2) |
 
 Plus the Noctalia-recommended decoration, blur layer rule and settings window rule.
+
+### Look
+
+Chosen in the Theme Lab demo:
+
+```toml
+# config/noctalia/00-fedora-hyprland.toml
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Ayu"
+```
+
+- Icons: **Papirus-Dark** (`papirus-icon-theme`, Fedora), folder color matched to Ayu's gold via `papirus-folders -C yellow`
+  (single script from the official PapirusDevelopmentTeam repo, pinned to a commit; not packaged in Fedora).
+- Cursor: **Bibata** (`bibata-cursor-theme` from Terra, added to the `includepkgs` allowlist).
+- Wallpaper: `fill_mode = "span"` across the 4000×2560 docked canvas. Own Ayu designs are generated SVGs in `wallpapers/`,
+  rendered to PNG with `rsvg-convert` (`librsvg2-tools`) into `~/Pictures/Wallpapers`. Third-party picks are only downloaded
+  from their source during install, never committed. Final pick pending.
 
 ## bin/update
 
