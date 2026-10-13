@@ -98,4 +98,6 @@ setup_user() {
   download_wallpapers "$list" "$WALL_DIR"
   noctalia_local_toml "$(default_wallpaper "$list" "$WALL_DIR")" >"$HOME/.config/noctalia/10-fedora-hyprland-local.toml"
   set_desktop_settings
+  mkdir -p "$HOME/.local/bin"
+  ln -sfn "$REPO_DIR/bin/update" "$HOME/.local/bin/update"
 }

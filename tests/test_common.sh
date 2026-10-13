@@ -34,4 +34,7 @@ ASSUME=no;  assert_false "ask_once: a no is returned"        ask_once demo "Ques
 ASSUME=yes; assert_false "ask_once: a remembered no is kept" ask_once demo "Question?" y
 ASSUME=yes; assert_true  "ask_once: other keys still ask"    ask_once other "Question?" n
 unset ASSUME
+
+kernels=$'6.19.8-300.fc44.x86_64\n7.0.2-200.fc44.x86_64\n6.19.10-300.fc44.x86_64'
+assert_eq "7.0.2-200.fc44.x86_64" "$(newest_version <<<"$kernels")" "newest kernel wins by version, not by text"
 finish

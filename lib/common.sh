@@ -59,3 +59,6 @@ fedora_version_ok() {
   version=$(. "$1" && echo "${VERSION_ID:-0}")
   [[ "$id" == fedora && "$version" =~ ^[0-9]+$ ]] && ((version >= 44))
 }
+
+# newest_version: stdin = version strings, one per line -> the highest one.
+newest_version() { sort -V | tail -1; }

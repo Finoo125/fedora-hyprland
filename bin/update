@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# One command for all updates: system packages, NVIDIA module, Flatpaks, firmware and the fedora-hyprland defaults.
+set -Eeuo pipefail
+# shellcheck source=lib/common.sh
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../lib/common.sh"
+
+log "System packages (snapper takes a snapshot before and after)"
+sudo dnf upgrade --refresh -y
+
+if rpm -q akmod-nvidia >/dev/null 2>&1; then
+  log "NVIDIA module for the newest kernel"
+  sudo akmods --kernels "$(rpm -q kernel --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' | newest_version)"
+fi
+
+log "Flatpak apps"
+sudo flatpak update -y --noninteractive
+
+log "Firmware"
+fwupdmgr refresh --force >/dev/null 2>&1 || true
+fwupdmgr update -y || echo "No firmware updates."
+
+log "fedora-hyprland defaults"
+git -C "$REPO_DIR" pull --ff-only
+"$REPO_DIR/install.sh"
