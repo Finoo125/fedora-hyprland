@@ -23,8 +23,9 @@ Target machines (both Intel-only, identical setup):
 
 ### Non-goals
 
-Installing Fedora itself (Anaconda), migrating data from the existing KDE install, NVIDIA/AMD GPUs,
-other distros, per-machine customization (until a real hardware difference shows up).
+Installing Fedora itself (Anaconda), migrating data from the existing KDE install, NVIDIA GPUs older than Turing
+(GTX 10xx and earlier need RPM Fusion's legacy 580xx driver), AMD-specific tuning, other distros,
+per-machine customization (until a real hardware difference shows up).
 
 ## Approach
 
@@ -125,7 +126,7 @@ hyprpolkitagent, swww).
 2. **Repos:** RPM Fusion, COPR, Terra (limited), Docker, VS Code, Flathub. Each is skipped if already present.
 3. **Packages:** dnf groups above, ffmpeg swap, multimedia group update.
 4. **Flatpaks + other installs.**
-5. **System configuration** (next section).
+5. **System configuration** (next section), then **NVIDIA** if detected and confirmed (section below).
 6. **User configuration:** layering above, `~/.local/bin/update` link, `xdg-user-dirs-update`.
 7. **Summary + optional steps:** fingerprint enrollment (`fprintd-enroll`), ArtCraft prompt, then "reboot now".
 
@@ -145,6 +146,43 @@ system config writes are overwrite-safe (same content each run).
 | Lid | systemd defaults: lid close suspends when undocked, is ignored when docked. |
 | GNOME Software | runs in the background via XDG autostart under uwsm for update notifications. |
 | Default apps | `mimeapps.list`: Thunar (folders), Papers (PDF), qView (images), mpv (video), Firefox (links), gnome-text-editor (text). |
+
+## NVIDIA (optional, RTX 20 to RTX 50)
+
+Runs only when an NVIDIA GPU is detected, and only after the user confirms (`NVIDIA=yes|no` env var skips the prompt).
+Follows RPM Fusion's current HowTos (NVIDIA, Secure Boot, Optimus).
+
+**Detection:** `lspci -nn -d 10de:` filtered to display controllers. The codename decides support:
+`TU1xx` (RTX 20 / GTX 16), `GA1xx` (RTX 30), `AD1xx` (RTX 40), `GB2xx` (RTX 50) → supported.
+Anything older (`GP`, `GM`, `GK`…) → warning pointing to RPM Fusion's legacy `580xx` driver, then skipped.
+A second (Intel/AMD) GPU present → **hybrid** mode, otherwise **dedicated** mode.
+
+**Steps, in this order:**
+
+1. **Secure Boot** (only if `mokutil --sb-state` reports enabled), done *before* the driver is installed so the module is signed
+   at build time: install `kmodtool akmods mokutil openssl`, `kmodgenca -a` (skipped if a key exists),
+   `mokutil --import /etc/pki/akmods/certs/public_key.der` (asks for a one-time password).
+   The installer warns that the blue MOK screen after reboot uses a **US keyboard layout**, so the password should avoid
+   `y`, `z` and special characters (they sit elsewhere on a German keyboard).
+2. **Driver:** `akmod-nvidia` (RPM Fusion nonfree; driver 595+ on Fedora 44 ships the **open kernel modules prebuilt by
+   default**, which Blackwell/RTX 50 requires), `xorg-x11-drv-nvidia-cuda` (nvidia-smi, CUDA, NVENC/NVDEC),
+   `xorg-x11-drv-nvidia-libs.i686` (Steam/32-bit games), `xorg-x11-drv-nvidia-power`, `libva-nvidia-driver` (VA-API).
+   `nvidia-drm.modeset` is **not** set manually (already on by default; RPM Fusion warns it conflicts with Fedora's simpledrm patch).
+3. **Build now, not in the background:** `akmods --force --kernels <running kernel>`, then `modinfo -F version nvidia`
+   must succeed before the installer suggests a reboot (rebooting during the background build gives a black screen).
+4. **Suspend:** `systemctl enable nvidia-suspend nvidia-resume nvidia-hibernate`.
+5. **Hyprland environment**, written by the installer to `~/.config/hypr/gpu.lua` (machine-specific, not in the repo;
+   the user stub loads it if present):
+
+| Mode | Settings |
+|---|---|
+| Dedicated (desktop) | `LIBVA_DRIVER_NAME=nvidia`, `__GLX_VENDOR_LIBRARY_NAME=nvidia`, `NVD_BACKEND=direct` |
+| Hybrid (laptop) | Hyprland renders on the iGPU for battery life: udev rule creates stable `/dev/dri/igpu` and `/dev/dri/dgpu` symlinks from the PCI path (the wiki warns `cardN` numbers change between boots), `AQ_DRM_DEVICES=/dev/dri/igpu:/dev/dri/dgpu`. `NVreg_DynamicPowerManagement=0x02` in `/etc/modprobe.d/nvidia.conf` so the dGPU sleeps when idle. A `nvidia-run` wrapper (`__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only`) starts an app on the dGPU, e.g. Steam launch option `nvidia-run %command%`. `switcheroo-control` enabled. |
+
+6. **Updates:** `bin/update` runs `akmods --kernels <newest installed kernel>` after `dnf upgrade` when `akmod-nvidia`
+   is installed, so the module for a new kernel exists before the next reboot. Snapper's pre/post snapshot covers rollback.
+
+**Recovery** (in the README): pick the previous kernel in GRUB, or roll back the last dnf transaction's snapshot in Btrfs Assistant.
 
 ## Hyprland defaults
 
@@ -237,6 +275,7 @@ builtin = "Ayu"
 
 ```
 sudo dnf upgrade --refresh   (snapper takes pre/post snapshots automatically)
+sudo akmods --kernels <newest kernel>   (only if akmod-nvidia is installed)
 flatpak update -y
 fwupdmgr refresh && fwupdmgr update
 git -C <repo> pull --ff-only && <repo>/install.sh
@@ -256,6 +295,9 @@ git -C <repo> pull --ff-only && <repo>/install.sh
   `install.sh` only runs `main` when executed (not when sourced), so CI can reuse its package lists.
 - **Manual:** Fedora 44 Minimal VM: run `install.sh` twice (second run must change nothing), reboot, log in.
   Then the real laptops, including dock/undock on the real monitors.
+- **NVIDIA:** neither laptop has one, so the detection and codename mapping get a unit check in CI (sample `lspci` lines for
+  TU/GA/AD/GB/GP, single and hybrid). The driver path itself needs a real RTX machine; until one is tested, the README
+  marks NVIDIA support as untested.
 
 ## Assumptions and open items
 
