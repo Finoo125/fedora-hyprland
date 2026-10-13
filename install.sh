@@ -20,6 +20,18 @@ preflight() {
   while sleep 50; do sudo -n true; kill -0 "$$" 2>/dev/null || exit; done 2>/dev/null &
 }
 
+# Questions asked at the end; a "no" is remembered so later runs (and `update`) don't ask again.
+optional_steps() {
+  local fp
+  fp=$(fprintd-list "$USER" 2>&1 || true)
+  if grep -q 'no fingers enrolled' <<<"$fp" && ask_once fingerprint "Enroll a fingerprint now (sudo, login, lock screen)?" y; then
+    fprintd-enroll || warn "Fingerprint enrollment didn't finish. Run fprintd-enroll later."
+  fi
+  if [[ ! -f "$ARTCRAFT_APPIMAGE" ]] && ask_once artcraft "Install the ArtCraft Launcher (alpha creative apps)?" n; then
+    install_artcraft
+  fi
+}
+
 main() {
   mkdir -p "$(dirname "$LOG_FILE")"
   exec > >(tee -a "$LOG_FILE") 2>&1
@@ -30,6 +42,8 @@ main() {
   log "Flatpak apps";        install_flatpaks
   log "Other apps";          install_apps
   log "Your configuration";  setup_user
+  log "System";              setup_system
+  log "Optional steps";      optional_steps
   log "Done. Reboot to start Hyprland: systemctl reboot"
 }
 
