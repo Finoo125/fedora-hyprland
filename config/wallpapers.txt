@@ -1,0 +1,21 @@
+# Wallpapers downloaded into ~/Pictures/Wallpapers. First entry is the default. Pinned to commits, so content can't change.
+# Orbits (AngelJumbo/gruvbox-wallpapers)
+https://raw.githubusercontent.com/AngelJumbo/gruvbox-wallpapers/293774acaa531ce106332f790c80301998066b25/wallpapers/mix/solar-system.jpg
+# Mountain sigil (AngelJumbo/gruvbox-wallpapers)
+https://raw.githubusercontent.com/AngelJumbo/gruvbox-wallpapers/293774acaa531ce106332f790c80301998066b25/wallpapers/minimalistic/gruv.jpg
+# Event horizon (D3Ext/aesthetic-wallpapers)
+https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/e34f05935c5b768f4c016b0893924d18ec1dba61/images/planet_minimal.png
+# Comet field (D3Ext/aesthetic-wallpapers)
+https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/e34f05935c5b768f4c016b0893924d18ec1dba61/images/colorful-planets.jpg
+# Lotus glow (AngelJumbo/gruvbox-wallpapers)
+https://raw.githubusercontent.com/AngelJumbo/gruvbox-wallpapers/293774acaa531ce106332f790c80301998066b25/wallpapers/photography/ameenfahmy-mXpTl4jNKiA.jpg
+# Reaching light (dharmx/walls)
+https://raw.githubusercontent.com/dharmx/walls/6bf4d733ebf2b484a37c17d742eb47e5139e6a14/unsorted/a_hand_reaching_out_to_the_sky.jpg
+# Low sun (AngelJumbo/gruvbox-wallpapers)
+https://raw.githubusercontent.com/AngelJumbo/gruvbox-wallpapers/293774acaa531ce106332f790c80301998066b25/wallpapers/minimalistic/sunset.png
+# Moonwalk (vyrx-dev/Wallpapers)
+https://raw.githubusercontent.com/vyrx-dev/Wallpapers/53e29b35fc242370e13f7dc1413ac8f5054e391e/others/astronaut2.png
+# Comet night (JaKooLit/Wallpaper-Bank)
+https://raw.githubusercontent.com/JaKooLit/Wallpaper-Bank/c5e1780c29adca428dc4ca2d970bd1a6a09f18f3/wallpapers/Comets-of-that-night.jpg
+# Horizon sunset (JaKooLit/Wallpaper-Bank)
+https://raw.githubusercontent.com/JaKooLit/Wallpaper-Bank/c5e1780c29adca428dc4ca2d970bd1a6a09f18f3/wallpapers/Sun-Setting-Horizon.png

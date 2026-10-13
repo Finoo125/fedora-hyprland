@@ -1,0 +1,32 @@
+# fedora-hyprland defaults for Noctalia v5. Your own ~/.config/noctalia/*.toml files and the Settings GUI override these.
+
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Ayu"
+
+[theme.templates]
+enable_builtin_templates = true
+builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "btop", "hyprland"]
+
+[wallpaper]
+enabled   = true
+fill_mode = "span"   # one image across both docked monitors; crop on a single screen
+
+[idle.behavior.lock]
+enabled = true
+timeout = 600
+action  = "lock"
+
+[idle.behavior.screen-off]
+enabled = true
+timeout = 660
+action  = "screen_off"
+
+[idle.behavior.suspend]
+enabled = true
+timeout = 1800
+action  = "lock_and_suspend"
+
+[plugins]
+enabled = ["icefish/phone-connect"]   # KDE Connect: battery, ring, SMS, clipboard for the Pixel
