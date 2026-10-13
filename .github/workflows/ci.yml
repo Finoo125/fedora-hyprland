@@ -11,6 +11,10 @@ jobs:
         run: shellcheck install.sh lib/*.sh tests/*.sh
       - name: bash unit tests
         run: bash tests/run.sh
+      - name: Lua syntax
+        run: for f in config/hypr/*.lua; do luac5.4 -p "$f"; done
+      - name: Lua unit tests
+        run: lua5.4 tests/test_hypr.lua
   packages:
     runs-on: ubuntu-latest
     container: fedora:44
