@@ -1,0 +1,6 @@
+# fedora-hyprland default (created once; yours to edit). Noctalia's ghostty template adds the color theme.
+font-family = JetBrains Mono
+font-size = 11
+window-padding-x = 10
+window-padding-y = 10
+confirm-close-surface = false

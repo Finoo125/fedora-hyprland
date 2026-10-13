@@ -174,8 +174,9 @@ A second (Intel/AMD) GPU present → **hybrid** mode, otherwise **dedicated** mo
 3. **Build now, not in the background:** `akmods --force --kernels <running kernel>`, then `modinfo -F version nvidia`
    must succeed before the installer suggests a reboot (rebooting during the background build gives a black screen).
 4. **Suspend:** `systemctl enable nvidia-suspend nvidia-resume nvidia-hibernate`.
-5. **Hyprland environment**, written by the installer to `~/.config/hypr/gpu.lua` (machine-specific, not in the repo;
-   the user stub loads it if present):
+5. **Session environment**, written by the installer to `~/.config/environment.d/60-fedora-hyprland-gpu.conf`
+   (machine-specific, not in the repo). systemd's user manager reads it, so it reaches Hyprland (a uwsm user unit)
+   and every app started with `uwsm app` (changed from a `gpu.lua` during the final review: `hl.env` doesn't reach those apps):
 
 | Mode | Settings |
 |---|---|

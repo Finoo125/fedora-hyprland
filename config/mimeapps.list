@@ -1,0 +1,14 @@
+[Default Applications]
+inode/directory=thunar.desktop
+application/pdf=org.gnome.Papers.desktop
+image/png=com.interversehq.qView.desktop
+image/jpeg=com.interversehq.qView.desktop
+image/webp=com.interversehq.qView.desktop
+image/gif=com.interversehq.qView.desktop
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+video/webm=mpv.desktop
+text/plain=org.gnome.TextEditor.desktop
+text/html=org.mozilla.firefox.desktop
+x-scheme-handler/http=org.mozilla.firefox.desktop
+x-scheme-handler/https=org.mozilla.firefox.desktop
