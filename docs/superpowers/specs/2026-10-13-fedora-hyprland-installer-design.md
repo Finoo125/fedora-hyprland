@@ -1,7 +1,7 @@
 # Fedora Hyprland Installer — Design
 
 - **Date:** 2026-10-13
-- **Status:** Draft, awaiting review
+- **Status:** Approved 2026-10-13
 - **Repo:** `github.com/Finoo125/fedora-hyprland` (public)
 
 ## Goal
@@ -17,7 +17,8 @@ Target machines (both Intel-only, identical setup):
 ### Success criteria
 
 1. Fresh Fedora 44 Minimal → `git clone … && ./install.sh` → reboot → Noctalia Greeter → working desktop.
-   The only interactive steps are the sudo password, the optional fingerprint enrollment, and the optional ArtCraft prompt.
+   The only interactive steps are the sudo password, the optional fingerprint enrollment, the optional ArtCraft prompt,
+   and (only on machines with an NVIDIA GPU) the driver prompt plus the Secure Boot key password.
 2. Re-running `install.sh` is safe and is how updates to the defaults get applied.
 3. Both laptops end up identical; plugging into the dock switches the monitor layout automatically, unplugging never leaves a black screen.
 
@@ -46,6 +47,7 @@ fedora-hyprland/                 cloned to ~/.local/share/fedora-hyprland
 │   ├── hypr/                    Hyprland defaults (Lua), split by topic
 │   ├── noctalia/                Noctalia defaults (TOML)
 │   ├── ghostty/  uwsm/  gtk-3.0/  gtk-4.0/  qt6ct/  mimeapps.list
+│   └── wallpapers.txt           pinned download URLs, first line = default
 ├── .github/workflows/ci.yml
 ├── LICENSE                      MIT
 └── README.md
@@ -84,7 +86,7 @@ references only (its files are GPL-1.0-only; we don't copy them).
 
 | Group | Packages |
 |---|---|
-| Desktop core | hyprland, uwsm, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, noctalia, greetd, noctalia-greeter, pipewire, pipewire-pulseaudio, wireplumber, bluez, NetworkManager-wifi, nm-connection-editor, tuned-ppd, upower, gnome-keyring, ddcutil, bolt, qt5-qtwayland, qt6-qtwayland, qt6ct, nwg-look, adw-gtk3-theme, papirus-icon-theme, bibata-cursor-theme, librsvg2-tools, xsettingsd, Noto + JetBrains Mono fonts, wl-clipboard, cliphist, grim, slurp, hyprpicker, xdg-user-dirs, xdg-utils |
+| Desktop core | hyprland, uwsm, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, noctalia, greetd, noctalia-greeter, pipewire, pipewire-pulseaudio, wireplumber, bluez, NetworkManager-wifi, nm-connection-editor, tuned-ppd, upower, gnome-keyring, ddcutil, bolt, qt5-qtwayland, qt6-qtwayland, qt6ct, nwg-look, adw-gtk3-theme, papirus-icon-theme, bibata-cursor-theme, xsettingsd, Noto + JetBrains Mono fonts, wl-clipboard, cliphist, grim, slurp, hyprpicker, xdg-user-dirs, xdg-utils |
 | Apps | ghostty, Thunar, thunar-archive-plugin, thunar-volman, tumbler, ffmpegthumbnailer, gvfs, gvfs-mtp, gvfs-smb, file-roller, firefox, mpv, qview, papers, gnome-text-editor, gnome-calculator, gnome-software, kde-connect |
 | CLI | git, wget, curl, fastfetch, btop, bat, eza, fzf, ripgrep, fd-find, zoxide, unzip, p7zip, bash-completion, plocate |
 | Multimedia | full `ffmpeg` (swap from ffmpeg-free), `@multimedia` group, intel-media-driver, libva-utils |
@@ -131,7 +133,8 @@ hyprpolkitagent, swww).
 7. **Summary + optional steps:** fingerprint enrollment (`fprintd-enroll`), ArtCraft prompt, then "reboot now".
 
 Idempotency: `dnf install` / `flatpak install` are no-ops when present; repo and file steps check before acting;
-system config writes are overwrite-safe (same content each run).
+system config writes are overwrite-safe (same content each run). Optional prompts (fingerprint, ArtCraft, NVIDIA) only
+appear while that item is not yet set up, so `update` → `install.sh` re-runs stay non-interactive.
 
 ## System configuration
 
@@ -267,9 +270,27 @@ builtin = "Ayu"
 - Icons: **Papirus-Dark** (`papirus-icon-theme`, Fedora), folder color matched to Ayu's gold via `papirus-folders -C yellow`
   (single script from the official PapirusDevelopmentTeam repo, pinned to a commit; not packaged in Fedora).
 - Cursor: **Bibata** (`bibata-cursor-theme` from Terra, added to the `includepkgs` allowlist).
-- Wallpaper: `fill_mode = "span"` across the 4000×2560 docked canvas. Own Ayu designs are generated SVGs in `wallpapers/`,
-  rendered to PNG with `rsvg-convert` (`librsvg2-tools`) into `~/Pictures/Wallpapers`. Third-party picks are only downloaded
-  from their source during install, never committed. Final pick pending.
+- Wallpaper: `fill_mode = "span"` across the 4000×2560 docked canvas (crop on a single screen). Ten picks, chosen by
+  scoring 2,627 images from five GitHub collections against the Ayu palette and reviewing the best by eye.
+  The collections have no redistribution license, so the images are **never committed**: `config/wallpapers.txt` lists raw
+  GitHub URLs pinned to a commit SHA (content can't change under us), and the installer downloads missing ones into
+  `~/Pictures/Wallpapers` (Noctalia's default browse folder, so Super+Shift+W shows all of them).
+
+| # | Name | Source (repo @ pinned commit) |
+|---|---|---|
+| 1 (default) | Orbits | AngelJumbo/gruvbox-wallpapers `wallpapers/mix/solar-system.jpg` |
+| 2 | Mountain sigil | AngelJumbo/gruvbox-wallpapers `wallpapers/minimalistic/gruv.jpg` |
+| 3 | Event horizon | D3Ext/aesthetic-wallpapers `images/planet_minimal.png` |
+| 4 | Comet field | D3Ext/aesthetic-wallpapers `images/colorful-planets.jpg` |
+| 5 | Lotus glow | AngelJumbo/gruvbox-wallpapers `wallpapers/photography/ameenfahmy-mXpTl4jNKiA.jpg` |
+| 6 | Reaching light | dharmx/walls `unsorted/a_hand_reaching_out_to_the_sky.jpg` |
+| 7 | Low sun | AngelJumbo/gruvbox-wallpapers `wallpapers/minimalistic/sunset.png` |
+| 8 | Moonwalk | vyrx-dev/Wallpapers `others/astronaut2.png` |
+| 9 | Comet night | JaKooLit/Wallpaper-Bank `wallpapers/Comets-of-that-night.jpg` |
+| 10 | Horizon sunset | JaKooLit/Wallpaper-Bank `wallpapers/Sun-Setting-Horizon.png` |
+
+  Pinned commits: gruvbox-wallpapers `293774a`, aesthetic-wallpapers `e34f059`, walls `6bf4d73`, Wallpapers (vyrx) `53e29b3`,
+  Wallpaper-Bank `c5e1780` (full SHAs in `config/wallpapers.txt`). A failed download warns and continues.
 
 ## bin/update
 
@@ -306,3 +327,7 @@ git -C <repo> pull --ff-only && <repo>/install.sh
 - Node.js moves from 24 to 26 when Fedora 44 packages it.
 - Framework 13 Pro (Panther Lake) support relies on Fedora 44's current kernel and Mesa; verify after first install.
 - Repo license: MIT.
+- To verify against the real tools during implementation (each is a small, contained step; if a mechanism doesn't exist,
+  the fallback is noted): Noctalia's plugin install for the KDE Connect plugin (fallback: README step via the plugin panel);
+  how noctalia-greeter takes a keyboard layout (fallback: `XKB_DEFAULT_LAYOUT` in the greetd session command);
+  Gear Lever's command-line integration for the ArtCraft AppImage (fallback: write the `.desktop` entry ourselves).
