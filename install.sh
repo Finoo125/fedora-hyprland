@@ -43,6 +43,7 @@ main() {
   log "Other apps";          install_apps
   log "Your configuration";  setup_user
   log "System";              setup_system
+  log "NVIDIA";              setup_nvidia
   log "Optional steps";      optional_steps
   log "Done. Reboot to start Hyprland: systemctl reboot"
 }
