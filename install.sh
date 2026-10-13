@@ -28,6 +28,7 @@ main() {
   log "Repositories";        setup_repos
   log "Packages";            install_packages
   log "Flatpak apps";        install_flatpaks
+  log "Other apps";          install_apps
   log "Done. Reboot to start Hyprland: systemctl reboot"
 }
 
