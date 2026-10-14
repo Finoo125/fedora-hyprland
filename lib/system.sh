@@ -88,13 +88,58 @@ setup_icons() {
   rm -f "$script"
 }
 
+# tuned_ppd_conf -> /etc/tuned/ppd.conf. Noctalia's power toggle talks to tuned-ppd. Fedora maps "balanced" to
+# balanced-battery when unplugged, which roughly doubles app start times; here "balanced" means full speed on AC
+# and plain balanced on battery. Power saver stays available for long battery days.
+tuned_ppd_conf() {
+  cat <<EOF
+# Written by fedora-hyprland/install.sh.
+[main]
+# The default PPD profile
+default=balanced
+battery_detection=true
+sysfs_acpi_monitor=true
+
+[profiles]
+# PPD = TuneD
+power-saver=powersave
+balanced=throughput-performance
+performance=throughput-performance
+
+[battery]
+# PPD = TuneD
+balanced=balanced
+EOF
+}
+
+setup_power() {
+  local conf
+  conf=$(tuned_ppd_conf)
+  if sudo test -f /etc/tuned/ppd.conf && [[ "$(sudo cat /etc/tuned/ppd.conf)" == "$conf" ]]; then return 0; fi
+  write_root /etc/tuned/ppd.conf "$conf"
+  sudo systemctl try-restart tuned-ppd
+}
+
+# enabled_units PATTERN -> enabled unit files matching PATTERN, one per line.
+enabled_units() { systemctl list-unit-files --state=enabled --no-legend "$1" | awk '{print $1}'; }
+
 setup_system() {
+  local -a abrt
   setup_greeter
   setup_fingerprint
   setup_snapper
   setup_icons
-  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd thermald fwupd-refresh.timer docker
+  setup_power
+  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd thermald fwupd-refresh.timer
+  # Docker starts on first use instead of at boot, where it made boot wait ~7 s for the network.
+  sudo systemctl disable docker.service
+  sudo systemctl enable docker.socket
   sudo usermod -aG docker "$USER"
+  # Ghostty keeps one instance running per user, so Super+Return opens windows instantly.
+  sudo systemctl --global enable app-com.mitchellh.ghostty.service
+  # The Minimal Install brings abrt (crash reporting to Fedora); its daemons only cost time at boot and login.
+  mapfile -t abrt < <(enabled_units 'abrt*')
+  if ((${#abrt[@]})); then sudo systemctl disable --now "${abrt[@]}"; fi
   if systemctl is-active -q firewalld && ! sudo firewall-cmd --permanent --query-service=kdeconnect >/dev/null 2>&1; then
     sudo firewall-cmd --permanent --add-service=kdeconnect
     sudo firewall-cmd --reload

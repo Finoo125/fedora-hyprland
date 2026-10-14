@@ -89,6 +89,12 @@ hl.monitor({ output = "desc:Dell Inc. DELL U2723QE", mode = "preferred", positio
 
 If the portrait monitor shows the picture upside down, override its rotation with `transform = 1` instead of `3`.
 
+## Power profiles
+
+Noctalia's power toggle switches TuneD profiles. **Balanced** runs at full speed on AC and switches to plain
+balanced on battery. Fedora's default is the more aggressive balanced-battery, which roughly doubles app start
+times. Pick **Power saver** when you need the battery to last.
+
 ## Your own changes
 
 | Yours (created once, never overwritten) | Regenerated on every install.sh run |

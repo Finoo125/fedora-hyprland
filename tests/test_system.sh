@@ -26,4 +26,9 @@ assert_true "greeter default session"  grep -qx 'default = "hyprland-uwsm"' <<<"
 assert_true "greeter uses Ayu"         grep -qx 'scheme = "Ayu"' <<<"$toml"
 assert_true "greeter wallpaper"        grep -qx 'path = "/var/lib/noctalia-greeter/wallpaper.jpg"' <<<"$toml"
 assert_false "no wallpaper section without a wallpaper" grep -q 'appearance.wallpaper' <<<"$(greeter_toml hyprland '')"
+
+ppd=$(tuned_ppd_conf)
+assert_eq "balanced=throughput-performance" "$(sed -n '/^\[profiles\]/,/^\[/p' <<<"$ppd" | grep '^balanced=')" "balanced runs at full speed on AC"
+assert_eq "balanced=balanced" "$(sed -n '/^\[battery\]/,$p' <<<"$ppd" | grep '^balanced=')" "balanced on battery is plain balanced, not balanced-battery"
+assert_true "power saver is still available" grep -qx 'power-saver=powersave' <<<"$ppd"
 finish
