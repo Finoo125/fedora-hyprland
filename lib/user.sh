@@ -62,7 +62,7 @@ set_desktop_settings() {
     gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark
     gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
-    gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Ice
+    gsettings set org.gnome.desktop.interface cursor-theme Bibata-Original-Ice
     gsettings set org.gnome.desktop.interface cursor-size 24'
   [[ -f "$marker" ]] && return 0
   if [[ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]]; then
