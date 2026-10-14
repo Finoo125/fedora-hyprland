@@ -11,6 +11,8 @@ fingerprint login, printing, automatic btrfs snapshots before every update, and 
 ## Before you start
 
 1. Download the Fedora 44 **Everything** netinstall ISO and choose **Minimal Install**.
+   On a laptop without a network cable, also tick **Hardware Support** and **Common NetworkManager Submodules**,
+   otherwise Wi-Fi doesn't work after the first boot.
 2. Keep the default automatic partitioning (btrfs). Snapshots need it.
 3. After the first boot, make sure you're online (`nmtui` for Wi-Fi).
 

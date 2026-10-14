@@ -13,7 +13,7 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc'
 
 DNF_BASE=(dnf5-plugins flatpak pciutils jq)
-DNF_DESKTOP=(hyprland uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
+DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
   gnome-keyring dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
   bibata-cursor-theme xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
@@ -78,6 +78,8 @@ install_packages() {
   sudo dnf install -y --allowerasing ffmpeg
   sudo dnf group install -y multimedia --setopt=install_weak_deps=False --exclude=PackageKit-gstreamer-plugin
   sudo dnf install -y "${DNF_MEDIA[@]}"
+  # Minimal Install leaves out the firmware for Wi-Fi, Bluetooth and audio chips (e.g. Intel iwlwifi).
+  sudo dnf group install -y hardware-support
 }
 
 install_flatpaks() {
