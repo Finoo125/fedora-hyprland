@@ -44,24 +44,47 @@ if you have one, updates Flatpaks and firmware, pulls this repo and re-runs `ins
 
 The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 
+**Apps**
+
 | Keys | Action |
 |---|---|
-| Super+Return / E / W / T / C | Ghostty / Thunar / Firefox / text editor / calculator |
-| Super+Space, Super+. | launcher, emoji picker |
+| Super+Return | Ghostty (opens instantly: Ghostty keeps running in the background) |
+| Super+E / W / T / C | Thunar / Firefox / text editor / calculator |
+| Calculator key | calculator |
+| Ctrl+Shift+Escape | btop |
+
+**Windows**
+
+| Keys | Action |
+|---|---|
 | Super+Q, Super+Escape | close window, force-kill (click a window) |
 | Super+F, Super+D, Super+Alt+Space | fullscreen, maximize, float |
 | Super+J | swap with the main window |
 | Super+arrows, Super+Shift+arrows | move focus, move window |
 | Alt+Tab, Super+Tab | cycle windows, window switcher |
+| Super+S, Super+Shift+S | scratchpad, move window to scratchpad |
+| Super+mouse drag (left / right) | move / resize window |
+| Super+Minus / Plus | zoom |
+
+**Noctalia**
+
+| Keys | Action |
+|---|---|
+| Super+Space, Super+. | launcher, emoji picker |
 | Super+X, Super+Z, Super+A | control center, settings, notifications |
 | Super+V, Super+P | clipboard history, color picker |
 | Super+L, Super+Alt+C | lock, session menu |
-| Print / Super+Print | screenshot of a region / of the screen |
 | Super+Shift+W | wallpaper picker |
-| Super+S, Super+Shift+S | scratchpad, move window to scratchpad |
-| Ctrl+Shift+Escape | btop |
-| Super+Minus / Plus | zoom |
-| Super+mouse drag (left / right) | move / resize window |
+| Print / Super+Print | screenshot of a region / of the screen |
+
+**Hardware keys and touchpad.** Volume, mic, media and brightness keys also work on the lock screen.
+
+| Keys | Action |
+|---|---|
+| Volume up / down / mute, mic mute | volume and microphone (hold to repeat) |
+| Play/Pause, Next, Previous | media control |
+| Brightness up / down | screen brightness (hold to repeat) |
+| Three-finger swipe left / right | previous / next workspace |
 
 **Desks:** there are four linked desks. Each desk is a pair of workspaces, one per monitor.
 
