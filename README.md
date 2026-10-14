@@ -84,7 +84,7 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Volume up / down / mute, mic mute | volume and microphone (hold to repeat) |
 | Play/Pause, Next, Previous | media control |
 | Brightness up / down | screen brightness (hold to repeat) |
-| Three-finger swipe left / right | previous / next workspace |
+| Three-finger swipe sideways | switch workspace |
 
 **Desks:** there are four linked desks. Each desk is a pair of workspaces, one per monitor.
 
