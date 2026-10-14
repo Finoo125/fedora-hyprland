@@ -25,7 +25,7 @@ function M.apply(removed)
   for _, m in ipairs(hl.get_monitors({ all = true })) do
     if m.name:match("^eDP") then
       if on then
-        hl.monitor({ output = m.name, mode = "preferred", position = "auto", scale = 1 })
+        hl.monitor({ output = m.name, disabled = false, mode = "preferred", position = "auto", scale = 1 })
       else
         hl.monitor({ output = m.name, disabled = true })
       end
