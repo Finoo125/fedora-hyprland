@@ -6,7 +6,7 @@ in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora bas
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
 Ayu colors everywhere, Papirus icons, Ghostty, Thunar, Firefox, codecs, gaming (Steam, ProtonPlus, Heroic),
 dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker, Podman, Python 3.12–3.14, Node.js LTS), Flathub apps,
-fingerprint login, printing, automatic btrfs snapshots before every update, and one `update` command for everything.
+fingerprint login, printing, automatic btrfs snapshots before every update, Pika Backup, and one `update` command for everything.
 
 ## Before you start
 
@@ -28,8 +28,22 @@ systemctl reboot
 Run it as your normal user; it asks for your password when it needs it. A full log is kept in
 `~/.cache/fedora-hyprland/install.log`. If something fails, fix it and run `install.sh` again: finished steps are skipped.
 
-At the end it may ask two questions: enroll a fingerprint, and install the ArtCraft Launcher (alpha creative apps).
-A "no" is remembered, so you aren't asked again.
+First it shows the language, keyboard layout and timezone you picked in the Fedora installer. Press Enter to keep them,
+or answer `n` to choose others. Hyprland and the login screen use the system keyboard layout. To change it later:
+`sudo localectl set-x11-keymap us`, then `update`.
+
+At the end it may ask four questions: enroll a fingerprint, take hourly snapshots of `/home`, add system snapshots to
+the boot menu, and install the ArtCraft Launcher (alpha creative apps). A "no" is remembered, so you aren't asked again.
+
+## Snapshots and backups
+
+- **System:** snapper snapshots `/` before and after every package change (see *If something breaks*).
+- **Boot menu (optional):** [grub-btrfs](https://github.com/Antynea/grub-btrfs) adds a **Fedora snapshots** submenu to
+  GRUB, so you can start the system as it was before an update even when it no longer boots normally.
+- **Your files (optional):** hourly snapshots of `/home`, 12 hourly and 7 daily kept. Restore a deleted or overwritten
+  file from Btrfs Assistant → Snapper → home, or copy it out of `/home/.snapshots/<number>/snapshot/` without sudo.
+- **Backups:** snapshots live on the same disk, so they don't survive a dead SSD or a lost laptop. Open **Pika Backup**,
+  pick an external drive or a server, and turn on its schedule. Pika's backups are encrypted and deduplicated.
 
 ## Update
 
@@ -148,6 +162,10 @@ Older cards get a pointer to RPM Fusion's legacy driver.
 ## If something breaks
 
 - **Bad update:** open Btrfs Assistant → Snapper, and restore the snapshot taken before the update.
+- **Bad update and it won't boot:** in GRUB, open **Fedora snapshots** and pick the snapshot from before the update.
+  `/boot` isn't part of the snapshots, so choose a kernel that was already installed back then (the older ones in the
+  list). The snapshot starts read-only and some services may complain. That's expected. Open Btrfs Assistant, restore
+  that snapshot and reboot. **Untested on real hardware so far.**
 - **Won't boot to the desktop:** pick the previous kernel in the GRUB menu, or switch to a text console with
   Ctrl+Alt+F3, log in, and look at `~/.cache/fedora-hyprland/install.log`.
 

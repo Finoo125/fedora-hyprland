@@ -27,6 +27,18 @@ optional_steps() {
   if grep -q 'no fingers enrolled' <<<"$fp" && ask_once fingerprint "Enroll a fingerprint now (sudo, login, lock screen)?" y; then
     fprintd-enroll || warn "Fingerprint enrollment didn't finish. Run fprintd-enroll later."
   fi
+  if home_snapshots_possible; then
+    if home_snapshots_enabled; then
+      setup_home_snapshots
+    elif ask_once home-snapshots "Take hourly snapshots of /home, so deleted files can be restored (kept 7 days)?" y; then
+      setup_home_snapshots
+    fi
+  fi
+  # Once installed, every run keeps grub-btrfs current; the question only comes the first time.
+  if sudo snapper -c root get-config >/dev/null 2>&1 && { [[ -f "$STATE_DIR/grub-btrfs-version" ]] ||
+    ask_once grub-btrfs "Add system snapshots to the boot menu, to start the system as it was before an update?" y; }; then
+    setup_grub_btrfs
+  fi
   if [[ ! -f "$ARTCRAFT_APPIMAGE" ]] && ask_once artcraft "Install the ArtCraft Launcher (alpha creative apps)?" n; then
     install_artcraft
   fi
@@ -37,6 +49,7 @@ main() {
   exec > >(tee -a "$LOG_FILE") 2>&1
   trap 'warn "Stopped at line $LINENO. Full log: $LOG_FILE. Fix the problem and run ./install.sh again; finished steps are skipped."' ERR
   preflight
+  log "Language and keyboard"; setup_locale
   log "Repositories";        setup_repos
   log "Packages";            install_packages
   log "Flatpak apps";        install_flatpaks

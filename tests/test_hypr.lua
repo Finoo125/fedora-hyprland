@@ -64,6 +64,18 @@ calls.monitors = {}
 calls.events["monitor.added"][1]({ name = "DP-5", description = "HP Inc. HP X27i" })
 check(calls.monitors[1].output == "eDP-1" and calls.monitors[1].disabled == true, "plugging in a monitor turns the panel off")
 
+-- input.lua
+local kb_file = os.tmpname()
+local f = io.open(kb_file, "w")
+f:write('Section "InputClass"\n        Option "XkbLayout" "de"\n        Option "XkbVariant" "nodeadkeys"\nEndSection\n')
+f:close()
+local input = dofile("config/hypr/input.lua")
+local layout, variant = input.keyboard(kb_file)
+check(layout == "de" and variant == "nodeadkeys", "keyboard layout and variant come from localed's file")
+os.remove(kb_file)
+layout, variant = input.keyboard("/nonexistent/00-keyboard.conf")
+check(layout == "us" and variant == "", "no keyboard file: US layout")
+
 -- desks.lua
 local desks = dofile("config/hypr/desks.lua")
 check(same(desks.focus_order(2, true), { 12, 2 }), "docked desk 2: portrait 12 first, main 2 last (focus ends on main)")

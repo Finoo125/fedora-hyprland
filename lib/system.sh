@@ -3,6 +3,7 @@
 
 GREETER_DIR=/var/lib/noctalia-greeter
 PAPIRUS_FOLDERS_SHA=0f838ee5679229e3a3e97e3b333c222c9e9615b4
+GRUB_BTRFS_SHA=2fcfbe967637166b88dadd49c834807243a941bf # v4.14; Fedora packages no grub-btrfs
 
 # greeter_session SESSIONS_DIR -> session name for the greeter; prefers the uwsm-managed Hyprland session.
 greeter_session() {
@@ -25,7 +26,7 @@ user = "greetd"
 EOF
 }
 
-# greeter_toml SESSION WALLPAPER -> /var/lib/noctalia-greeter/greeter.toml
+# greeter_toml SESSION WALLPAPER LAYOUT -> /var/lib/noctalia-greeter/greeter.toml
 greeter_toml() {
   cat <<EOF
 # Written by fedora-hyprland/install.sh on every run.
@@ -33,7 +34,7 @@ greeter_toml() {
 default = "$1"
 
 [keyboard]
-layout = "de"
+layout = "$3"
 
 [appearance]
 scheme = "Ayu"
@@ -56,7 +57,7 @@ setup_greeter() {
     sudo install -m 644 -o greetd -g greetd "$src" "$wall"
   fi
   write_root "$GREETER_DIR/greeter.toml" \
-    "$(greeter_toml "$(greeter_session /usr/share/wayland-sessions)" "$wall")"
+    "$(greeter_toml "$(greeter_session /usr/share/wayland-sessions)" "$wall" "$(keyboard_layout "$XKB_CONF")")"
   sudo chown greetd:greetd "$GREETER_DIR/greeter.toml"
   sudo systemctl enable greetd
   sudo systemctl set-default graphical.target
@@ -76,6 +77,59 @@ setup_snapper() {
   sudo snapper -c root get-config >/dev/null 2>&1 || sudo snapper -c root create-config /
   sudo snapper -c root set-config NUMBER_LIMIT=10 NUMBER_LIMIT_IMPORTANT=5 TIMELINE_CREATE=no
   sudo install -D -m 644 "$REPO_DIR/config/snapper.actions" /etc/dnf/libdnf5-plugins/actions.d/snapper.actions
+}
+
+# home_snapshots_possible -> 0 when /home is its own btrfs subvolume (Fedora's default layout).
+home_snapshots_possible() { [[ "$(findmnt -no FSTYPE /home 2>/dev/null)" == btrfs ]]; }
+home_snapshots_enabled() { sudo snapper -c home get-config >/dev/null 2>&1; }
+
+# Hourly snapshots of /home: undo a deleted or overwritten file from Btrfs Assistant or /home/.snapshots.
+# They live on the same disk, so they are no backup: Pika Backup copies to another drive or a server.
+setup_home_snapshots() {
+  home_snapshots_enabled || sudo snapper -c home create-config /home
+  # ALLOW_USERS + SYNC_ACL let you browse and restore your own snapshots without sudo.
+  sudo snapper -c home set-config TIMELINE_CREATE=yes TIMELINE_CLEANUP=yes TIMELINE_LIMIT_HOURLY=12 \
+    TIMELINE_LIMIT_DAILY=7 TIMELINE_LIMIT_WEEKLY=0 TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_YEARLY=0 \
+    "ALLOW_USERS=$USER" SYNC_ACL=yes
+  sudo systemctl enable --now snapper-timeline.timer snapper-cleanup.timer
+}
+
+# grub_btrfs_config -> /etc/default/grub-btrfs/config, with Fedora's grub2 paths (upstream defaults to Debian/Arch's).
+grub_btrfs_config() {
+  cat <<'EOF'
+# Written by fedora-hyprland/install.sh on every run. All options: man grub-btrfs
+GRUB_BTRFS_SUBMENUNAME="Fedora snapshots"
+GRUB_BTRFS_LIMIT="20"
+GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"
+GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig
+GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check
+GRUB_BTRFS_MKCONFIG_LIB=/usr/share/grub/grub-mkconfig_lib
+# "root" is the running system; container layers aren't bootable systems.
+GRUB_BTRFS_IGNORE_SPECIFIC_PATH=("root")
+GRUB_BTRFS_IGNORE_PREFIX_PATH=("home" "root/var/lib/docker" "root/var/lib/containers" "root/var/lib/machines")
+EOF
+}
+
+# A "Fedora snapshots" GRUB submenu, kept current by grub-btrfsd whenever snapper takes a snapshot.
+# /boot is a separate partition, so a snapshot boots with today's kernels: pick one that was installed back then.
+setup_grub_btrfs() {
+  local tmp conf marker="$STATE_DIR/grub-btrfs-version"
+  if [[ "$(cat "$marker" 2>/dev/null)" != "$GRUB_BTRFS_SHA" ]]; then
+    tmp=$(mktemp -d)
+    curl -fsSL "https://github.com/Antynea/grub-btrfs/archive/$GRUB_BTRFS_SHA.tar.gz" | tar -xz -C "$tmp" --strip-components=1
+    sudo make -C "$tmp" install GRUB_UPDATE_EXCLUDE=true >/dev/null
+    rm -rf "$tmp"
+    # make install brings upstream's config; removing it makes the check below write ours and rebuild grub.cfg.
+    sudo rm -f /etc/default/grub-btrfs/config
+    mkdir -p "$STATE_DIR"
+    echo "$GRUB_BTRFS_SHA" >"$marker"
+  fi
+  conf=$(grub_btrfs_config)
+  if ! sudo test -f /etc/default/grub-btrfs/config || [[ "$(sudo cat /etc/default/grub-btrfs/config)" != "$conf" ]]; then
+    write_root /etc/default/grub-btrfs/config "$conf"
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+  fi
+  sudo systemctl enable --now grub-btrfsd
 }
 
 # Gold folders in Papirus-Dark to match Ayu (papirus-folders is a single script, pinned to a commit).

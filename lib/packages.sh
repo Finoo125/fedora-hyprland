@@ -24,7 +24,7 @@ DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxid
 DNF_MEDIA=(intel-media-driver libva-utils)
 DNF_GAMING=(steam gamemode mangohud gamescope lutris protontricks winetricks vulkan-tools)
 DNF_SYSTEM=(fuse-libs cups system-config-printer avahi nss-mdns fprintd fprintd-pam snapper btrfs-assistant
-  libdnf5-plugin-actions fwupd thermald)
+  libdnf5-plugin-actions fwupd thermald inotify-tools)
 DNF_DEV=(gcc make uv python3 python3.12 python3.13 nodejs24 nodejs24-npm podman distrobox code
   docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 DNF_NVIDIA=(akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-power
@@ -32,7 +32,7 @@ DNF_NVIDIA=(akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-libs.i686 
 DNF_SECUREBOOT=(kmodtool akmods mokutil openssl)
 FLATPAKS=(com.discordapp.Discord org.signal.Signal org.telegram.desktop com.rtosta.zapzap org.mozilla.Thunderbird
   org.videolan.VLC com.bitwarden.desktop md.obsidian.Obsidian io.dbeaver.DBeaverCommunity org.localsend.localsend_app
-  com.vysp3r.ProtonPlus com.heroicgameslauncher.hgl io.github.Faugus.faugus-launcher it.mijorus.gearlever
+  com.vysp3r.ProtonPlus com.heroicgameslauncher.hgl io.github.Faugus.faugus-launcher it.mijorus.gearlever org.gnome.World.PikaBackup
   com.github.tchx84.Flatseal io.missioncenter.MissionCenter)
 
 # all_dnf_packages -> every dnf package the installer may install, one per line (CI checks they exist).

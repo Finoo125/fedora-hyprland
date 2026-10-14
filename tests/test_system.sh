@@ -20,12 +20,18 @@ conf=$(greetd_config /usr/bin/noctalia-greeter-session)
 assert_true "greetd starts the greeter session wrapper" grep -qx 'command = "/usr/bin/noctalia-greeter-session"' <<<"$conf"
 assert_true "greetd uses Fedora's greetd user"         grep -qx 'user = "greetd"' <<<"$conf"
 
-toml=$(greeter_toml hyprland-uwsm /var/lib/noctalia-greeter/wallpaper.jpg)
-assert_true "greeter keyboard is German" grep -qx 'layout = "de"' <<<"$toml"
+toml=$(greeter_toml hyprland-uwsm /var/lib/noctalia-greeter/wallpaper.jpg fr)
+assert_true "greeter keyboard is the system's" grep -qx 'layout = "fr"' <<<"$toml"
 assert_true "greeter default session"  grep -qx 'default = "hyprland-uwsm"' <<<"$toml"
 assert_true "greeter uses Ayu"         grep -qx 'scheme = "Ayu"' <<<"$toml"
 assert_true "greeter wallpaper"        grep -qx 'path = "/var/lib/noctalia-greeter/wallpaper.jpg"' <<<"$toml"
-assert_false "no wallpaper section without a wallpaper" grep -q 'appearance.wallpaper' <<<"$(greeter_toml hyprland '')"
+assert_false "no wallpaper section without a wallpaper" grep -q 'appearance.wallpaper' <<<"$(greeter_toml hyprland '' us)"
+
+gb=$(grub_btrfs_config)
+assert_true "grub-btrfs uses Fedora's grub2-mkconfig" grep -qx 'GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig' <<<"$gb"
+assert_true "grub-btrfs writes to /boot/grub2"         grep -qx 'GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"' <<<"$gb"
+assert_true "the running system is not a snapshot entry" grep -qx 'GRUB_BTRFS_IGNORE_SPECIFIC_PATH=("root")' <<<"$gb"
+assert_true "the config is valid bash" bash -n <<<"$gb"
 
 ppd=$(tuned_ppd_conf)
 assert_eq "balanced=throughput-performance" "$(sed -n '/^\[profiles\]/,/^\[/p' <<<"$ppd" | grep '^balanced=')" "balanced runs at full speed on AC"
