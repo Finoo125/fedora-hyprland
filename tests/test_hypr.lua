@@ -51,7 +51,8 @@ check(calls.monitors[1].output == "eDP-1" and calls.monitors[1].disabled == true
 state.active = { { name = "FALLBACK", description = "" } }
 calls.monitors = {}
 mon.apply()
-check(calls.monitors[1].output == "eDP-1" and not calls.monitors[1].disabled, "undocked: apply() enables eDP-1")
+-- hl.monitor merges into the existing rule for that output, so "on" must clear disabled explicitly.
+check(calls.monitors[1].output == "eDP-1" and calls.monitors[1].disabled == false, "undocked: apply() re-enables eDP-1")
 check(calls.events["monitor.added"] and calls.events["monitor.removed"], "dock handling runs on hotplug events")
 
 -- The removed monitor may still be listed when monitor.removed fires: it must not keep the panel off.

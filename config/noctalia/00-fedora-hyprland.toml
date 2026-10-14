@@ -9,6 +9,14 @@ builtin = "Ayu"
 enable_builtin_templates = true
 builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "btop", "hyprland"]
 
+[shell]
+polkit_agent = true   # password prompts for Btrfs Assistant, GNOME Software and other admin actions
+
+[bar.default]
+margin_ends      = 0   # full width, like CachyOS: no gap at either end
+radius_top_left  = 0
+radius_top_right = 0
+
 [wallpaper]
 enabled   = true
 fill_mode = "span"   # one image across both docked monitors; crop on a single screen
