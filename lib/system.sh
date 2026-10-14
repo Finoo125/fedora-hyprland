@@ -93,7 +93,7 @@ setup_system() {
   setup_fingerprint
   setup_snapper
   setup_icons
-  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd fwupd-refresh.timer docker
+  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd thermald fwupd-refresh.timer docker
   sudo usermod -aG docker "$USER"
   if systemctl is-active -q firewalld && ! sudo firewall-cmd --permanent --query-service=kdeconnect >/dev/null 2>&1; then
     sudo firewall-cmd --permanent --add-service=kdeconnect

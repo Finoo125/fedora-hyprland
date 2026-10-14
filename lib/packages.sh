@@ -24,7 +24,7 @@ DNF_CLI=(git wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide u
 DNF_MEDIA=(intel-media-driver libva-utils)
 DNF_GAMING=(steam gamemode mangohud gamescope lutris protontricks winetricks vulkan-tools)
 DNF_SYSTEM=(fuse-libs cups system-config-printer avahi nss-mdns fprintd fprintd-pam snapper btrfs-assistant
-  libdnf5-plugin-actions fwupd)
+  libdnf5-plugin-actions fwupd thermald)
 DNF_DEV=(gcc make uv python3 python3.12 python3.13 nodejs24 nodejs24-npm podman distrobox code
   docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 DNF_NVIDIA=(akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-power
