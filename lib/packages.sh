@@ -20,7 +20,7 @@ DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-des
   wl-clipboard grim slurp hyprpicker xdg-user-dirs xdg-utils)
 DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer gvfs gvfs-mtp gvfs-smb
   file-roller firefox mpv qview papers gnome-text-editor gnome-calculator gnome-software kde-connect)
-DNF_CLI=(git wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate)
+DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate)
 DNF_MEDIA=(intel-media-driver libva-utils)
 DNF_GAMING=(steam gamemode mangohud gamescope lutris protontricks winetricks vulkan-tools)
 DNF_SYSTEM=(fuse-libs cups system-config-printer avahi nss-mdns fprintd fprintd-pam snapper btrfs-assistant
