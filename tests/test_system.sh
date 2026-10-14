@@ -31,4 +31,6 @@ ppd=$(tuned_ppd_conf)
 assert_eq "balanced=throughput-performance" "$(sed -n '/^\[profiles\]/,/^\[/p' <<<"$ppd" | grep '^balanced=')" "balanced runs at full speed on AC"
 assert_eq "balanced=balanced" "$(sed -n '/^\[battery\]/,$p' <<<"$ppd" | grep '^balanced=')" "balanced on battery is plain balanced, not balanced-battery"
 assert_true "power saver is still available" grep -qx 'power-saver=powersave' <<<"$ppd"
+# tuned-ppd exits with "Duplicate profile mapping" unless every PPD profile maps to its own TuneD profile.
+assert_eq "" "$(sed -n '/^\[profiles\]/,/^\[/p' <<<"$ppd" | grep -v '^#' | grep '=' | cut -d= -f2 | sort | uniq -d)" "no TuneD profile is mapped twice on AC"
 finish

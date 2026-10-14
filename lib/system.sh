@@ -90,7 +90,9 @@ setup_icons() {
 
 # tuned_ppd_conf -> /etc/tuned/ppd.conf. Noctalia's power toggle talks to tuned-ppd. Fedora maps "balanced" to
 # balanced-battery when unplugged, which roughly doubles app start times; here "balanced" means full speed on AC
-# and plain balanced on battery. Power saver stays available for long battery days.
+# and plain balanced on battery. Power saver stays available for long battery days. tuned-ppd refuses to start
+# when two PPD profiles map to the same TuneD profile, so performance uses accelerator-performance (throughput-performance
+# plus shallow C-states only).
 tuned_ppd_conf() {
   cat <<EOF
 # Written by fedora-hyprland/install.sh.
@@ -104,7 +106,7 @@ sysfs_acpi_monitor=true
 # PPD = TuneD
 power-saver=powersave
 balanced=throughput-performance
-performance=throughput-performance
+performance=accelerator-performance
 
 [battery]
 # PPD = TuneD
