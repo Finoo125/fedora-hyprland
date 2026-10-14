@@ -62,7 +62,7 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Super+J | swap with the main window |
 | Super+arrows, Super+Shift+arrows | move focus, move window |
 | Alt+Tab, Super+Tab | cycle windows, window switcher |
-| Super+S, Super+Shift+S | scratchpad, move window to scratchpad |
+| Super+S | scratchpad |
 | Super+mouse drag (left / right) | move / resize window |
 | Super+Minus / Plus | zoom |
 
@@ -76,6 +76,7 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Super+L, Super+Alt+C | lock, session menu |
 | Super+Shift+W | wallpaper picker |
 | Print / Super+Print | screenshot of a region / of the screen |
+| Super+Shift+S | start / stop screen recording (asks what to record; saved to ~/Videos/Recordings) |
 
 **Hardware keys and touchpad.** Volume, mic, media and brightness keys also work on the lock screen.
 

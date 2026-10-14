@@ -17,7 +17,7 @@ DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-des
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
   gnome-keyring dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
   bibata-cursor-theme xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
-  wl-clipboard grim slurp hyprpicker xdg-user-dirs xdg-utils)
+  wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie xdg-user-dirs xdg-utils)
 DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer gvfs gvfs-mtp gvfs-smb
   file-roller firefox mpv qview papers gnome-text-editor gnome-calculator gnome-software kde-connect)
 DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate)

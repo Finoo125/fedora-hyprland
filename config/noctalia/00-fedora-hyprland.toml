@@ -7,7 +7,7 @@ builtin = "Ayu"
 
 [theme.templates]
 enable_builtin_templates = true
-builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "btop", "hyprland"]
+builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "btop", "hyprland", "firefox"]   # Firefox also needs the Pywalfox extension
 
 [shell]
 polkit_agent = true   # password prompts for Btrfs Assistant, GNOME Software and other admin actions
@@ -37,4 +37,8 @@ timeout = 1800
 action  = "lock_and_suspend"
 
 [plugins]
-enabled = ["icefish/phone-connect"]   # KDE Connect: battery, ring, SMS, clipboard for the Pixel
+enabled = [
+  "icefish/phone-connect",     # KDE Connect: battery, ring, SMS, clipboard for the Pixel
+  "noctalia/screen_recorder",  # Super+Shift+S starts/stops a recording (gpu-screen-recorder), saved to ~/Videos/Recordings
+  "aristides/udiskie",         # USB drive panel and notifications; udiskie itself mounts them (autostart.lua)
+]

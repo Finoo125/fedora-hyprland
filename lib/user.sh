@@ -87,6 +87,11 @@ setup_user() {
   download_wallpapers "$list" "$WALL_DIR"
   noctalia_local_toml "$(default_wallpaper "$list" "$WALL_DIR")" "$WALL_DIR" >"$HOME/.config/noctalia/10-fedora-hyprland-local.toml"
   set_desktop_settings
+  # Native host for the Pywalfox extension, so Firefox follows Noctalia's colors.
+  noctalia firefox-theme install >/dev/null || warn "Could not set up Firefox theming (noctalia firefox-theme install)."
+  # Noctalia writes to ~/.mozilla; Firefox 147+ reads ~/.config/mozilla on new installs.
+  mkdir -p "$HOME/.config/mozilla/native-messaging-hosts"
+  ln -sfn "$HOME/.mozilla/native-messaging-hosts/pywalfox.json" "$HOME/.config/mozilla/native-messaging-hosts/pywalfox.json"
   mkdir -p "$HOME/.local/bin"
   ln -sfn "$REPO_DIR/bin/update" "$HOME/.local/bin/update"
 }

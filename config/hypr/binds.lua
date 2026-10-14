@@ -25,7 +25,6 @@ hl.bind(mod .. " + mouse:273", hl.dsp.window.resize())
 hl.bind(mod .. " + ALT + code:10", hl.dsp.focus({ monitor = PORTRAIT }))
 hl.bind(mod .. " + ALT + code:11", hl.dsp.focus({ monitor = MAIN }))
 hl.bind(mod .. " + S", hl.dsp.workspace.toggle_special("scratchpad"))
-hl.bind(mod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:scratchpad" }))
 
 local function zoom(delta)
   local z = hl.get_config("cursor.zoom_factor") + delta
@@ -57,6 +56,7 @@ hl.bind(mod .. " + SHIFT + W", noctalia("panel-toggle wallpaper"))
 hl.bind(mod .. " + P", hl.dsp.exec_cmd("hyprpicker -a -n"))
 hl.bind("Print", noctalia("screenshot-region"))
 hl.bind(mod .. " + Print", noctalia("screenshot-fullscreen"))
+hl.bind(mod .. " + SHIFT + S", noctalia("plugin noctalia/screen_recorder:service all toggle"))
 
 -- Hardware keys (also work on the lock screen)
 local held, locked = { locked = true, repeating = true }, { locked = true }
