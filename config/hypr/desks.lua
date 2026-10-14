@@ -1,6 +1,7 @@
 -- Four linked desks: Super+N shows workspace N on the main monitor and 10+N on the portrait monitor.
 -- Super+Shift+N moves the focused window to desk N on the monitor it's on.
-local M = {}
+-- Ctrl+Super+Left/Right steps to the previous/next desk, like Windows. Every session starts on desk 1.
+local M = { COUNT = 4 }
 local MAIN = "desc:HP Inc. HP X27i"
 local PORTRAIT = "desc:HP Inc. HP E27q G5"
 local PORTRAIT_MODEL = "HP E27q G5"
@@ -9,6 +10,17 @@ local PORTRAIT_MODEL = "HP E27q G5"
 function M.focus_order(n, portrait_connected)
   if portrait_connected then return { 10 + n, n } end
   return { n }
+end
+
+-- Desk a workspace belongs to: main 1-4, portrait 11-14.
+function M.desk_of(ws_id)
+  if ws_id > 10 then return ws_id - 10 end
+  return ws_id
+end
+
+-- Ctrl+Super+Left/Right: the neighbouring desk, stopping at the first and last like Windows.
+function M.step(ws_id, delta)
+  return math.max(1, math.min(M.COUNT, M.desk_of(ws_id) + delta))
 end
 
 -- Portrait desks are workspaces 11-14.
@@ -22,7 +34,7 @@ function M.strays(windows)
   local out = {}
   for _, w in ipairs(windows) do
     local id = w.workspace and w.workspace.id
-    if id and id >= 11 and id <= 14 then table.insert(out, { address = w.address, workspace = id - 10 }) end
+    if id and id >= 11 and id <= 10 + M.COUNT then table.insert(out, { address = w.address, workspace = id - 10 }) end
   end
   return out
 end
@@ -34,20 +46,32 @@ local function portrait_connected()
   return false
 end
 
-for n = 1, 4 do
+local function focus_desk(n)
+  for _, ws in ipairs(M.focus_order(n, portrait_connected())) do
+    hl.dispatch(hl.dsp.focus({ workspace = tostring(ws) }))
+  end
+end
+
+local function active_ws_id()
+  local ws = hl.get_active_workspace()
+  return ws and ws.id or 1
+end
+
+for n = 1, M.COUNT do
   hl.workspace_rule({ workspace = tostring(n), monitor = MAIN, default = (n == 1) })
   hl.workspace_rule({ workspace = tostring(10 + n), monitor = PORTRAIT, default = (n == 1), layout_opts = { orientation = "top" } })
   local key = "code:" .. (9 + n) -- digit keys by keycode (1 = code:10), works on QWERTZ and AZERTY
-  hl.bind("SUPER + " .. key, function()
-    for _, ws in ipairs(M.focus_order(n, portrait_connected())) do
-      hl.dispatch(hl.dsp.focus({ workspace = tostring(ws) }))
-    end
-  end)
+  hl.bind("SUPER + " .. key, function() focus_desk(n) end)
   hl.bind("SUPER + SHIFT + " .. key, function()
-    local ws = hl.get_active_workspace()
-    hl.dispatch(hl.dsp.window.move({ workspace = tostring(M.move_target(ws and ws.id or 1, n)), follow = false }))
+    hl.dispatch(hl.dsp.window.move({ workspace = tostring(M.move_target(active_ws_id(), n)), follow = false }))
   end)
 end
+hl.bind("CONTROL + SUPER + Left", function() focus_desk(M.step(active_ws_id(), -1)) end)
+hl.bind("CONTROL + SUPER + Right", function() focus_desk(M.step(active_ws_id(), 1)) end)
+
+-- Desks 1-4 belong to the main monitor, so without it Hyprland would open the laptop panel on workspace 5.
+-- Start on desk 1 instead; the first apps then open there too.
+hl.on("hyprland.start", function() focus_desk(1) end)
 
 -- Decided by the removed monitor itself, in case Hyprland still lists it when the event fires.
 hl.on("monitor.removed", function(m)

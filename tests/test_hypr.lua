@@ -94,6 +94,25 @@ calls.dispatched = {}
 undock({ name = "DP-5", description = "HP Inc. HP X27i" })
 check(#calls.dispatched == 0, "removing another monitor moves nothing")
 
+check(desks.step(2, 1) == 3 and desks.step(2, -1) == 1, "Ctrl+Super+arrows step one desk")
+check(desks.step(13, 1) == 4, "stepping from the portrait monitor uses its desk number")
+check(desks.step(1, -1) == 1 and desks.step(4, 1) == 4, "stepping stops at the first and last desk")
+check(desks.step(5, -1) == 4, "from a stray workspace 5, Left goes to the last desk")
+
+state.ws = { id = 12 }
+calls.dispatched = {}
+calls.binds["CONTROL + SUPER + Right"]()
+check(#calls.dispatched == 2 and calls.dispatched[1].args.workspace == "13" and calls.dispatched[2].args.workspace == "3",
+  "docked Ctrl+Super+Right from desk 2 switches both monitors to desk 3")
+
+-- Undocked start: desks belong to the missing main monitor, so the session must focus desk 1 explicitly.
+state.active = { { name = "eDP-1", description = "BOE 0x0BCA" } }
+calls.dispatched = {}
+local start = calls.events["hyprland.start"][#calls.events["hyprland.start"]]
+start()
+check(#calls.dispatched == 1 and calls.dispatched[1].args.workspace == "1", "undocked session starts on desk 1")
+state.ws = { id = 1 }
+
 local rule_for_11
 for _, r in ipairs(calls.rules) do if r.workspace == "11" then rule_for_11 = r end end
 check(rule_for_11 and rule_for_11.layout_opts.orientation == "top", "portrait desks stack windows top/bottom")

@@ -87,10 +87,12 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Three-finger swipe sideways | switch workspace |
 
 **Desks:** there are four linked desks. Each desk is a pair of workspaces, one per monitor.
+Every session starts on desk 1, so the first apps you open land there.
 
 | Keys | Action |
 |---|---|
 | Super+1..4 | switch both monitors to desk 1–4 |
+| Ctrl+Super+Left / Right | previous / next desk (stops at desk 1 and 4) |
 | Super+Shift+1..4 | move the window to desk 1–4 on its monitor |
 | Super+Alt+1 / 2 | focus the portrait / main monitor |
 
