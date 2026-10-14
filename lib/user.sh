@@ -2,41 +2,12 @@
 # Per-user configuration: config layering, Hyprland stub, wallpapers, GTK/Qt settings.
 
 WALL_DIR="$HOME/Pictures/Wallpapers"
-KBD_MODEL_MAP=/usr/share/systemd/kbd-model-map # systemd's console keymap -> X11 layout table
-
-# kb_field NAME TEXT -> value of "NAME: value" in localectl output, empty if unset.
-kb_field() { awk -F': *' -v k="$1" '$1 ~ k"$" && $2 != "(unset)" && $2 != "n/a" {print $2}' <<<"$2"; }
-
-# kb_from_localectl TEXT -> "layout|variant" from `localectl status` (X11 first, then console keymap, then us).
-kb_from_localectl() {
-  local layout variant keymap mapped=""
-  layout=$(kb_field "X11 Layout" "$1")
-  variant=$(kb_field "X11 Variant" "$1")
-  if [[ -z "$layout" ]]; then
-    keymap=$(kb_field "VC Keymap" "$1")
-    if [[ -n "$keymap" && -r "$KBD_MODEL_MAP" ]]; then
-      mapped=$(awk -v k="$keymap" '$1 == k { print $2 "|" ($4 == "-" ? "" : $4); exit }' "$KBD_MODEL_MAP")
-    fi
-    if [[ -n "$mapped" ]]; then
-      layout=${mapped%%|*}
-      variant=${mapped#*|}
-    else
-      layout=${keymap%%-*}
-      if [[ "$keymap" == *-* ]]; then variant=${keymap#*-}; fi
-    fi
-  fi
-  printf '%s|%s\n' "${layout:-us}" "$variant"
-}
-
-# hypr_stub REPO LAYOUT VARIANT -> ~/.config/hypr/hyprland.lua (written once, then it's yours).
+# hypr_stub REPO -> ~/.config/hypr/hyprland.lua (written once, then it's yours).
 hypr_stub() {
   cat <<EOF
 -- Your Hyprland config. fedora-hyprland created it once and never overwrites it.
 -- The defaults live in $1/config/hypr and update with the \`update\` command.
 require("$1/config/hypr/main.lua")("$1")
-
--- Keyboard layout from the Fedora installer.
-hl.config({ input = { kb_layout = "$2", kb_variant = "$3" } })
 
 -- Your own changes go below this line.
 EOF
@@ -104,7 +75,7 @@ set_desktop_settings() {
 }
 
 setup_user() {
-  local kb item list="$REPO_DIR/config/wallpapers.txt"
+  local item list="$REPO_DIR/config/wallpapers.txt"
   xdg-user-dirs-update
   mkdir -p "$HOME/.config/noctalia"
   ln -sfn "$REPO_DIR/config/noctalia/00-fedora-hyprland.toml" "$HOME/.config/noctalia/00-fedora-hyprland.toml"
@@ -112,8 +83,7 @@ setup_user() {
     copy_once "$REPO_DIR/config/$item" "$HOME/.config/$item"
   done
   write_once "$HOME/.config/qt6ct/qt6ct.conf" "$(qt6ct_conf "$HOME")"
-  kb=$(kb_from_localectl "$(localectl status)")
-  write_once "$HOME/.config/hypr/hyprland.lua" "$(hypr_stub "$REPO_DIR" "${kb%%|*}" "${kb#*|}")"
+  write_once "$HOME/.config/hypr/hyprland.lua" "$(hypr_stub "$REPO_DIR")"
   download_wallpapers "$list" "$WALL_DIR"
   noctalia_local_toml "$(default_wallpaper "$list" "$WALL_DIR")" "$WALL_DIR" >"$HOME/.config/noctalia/10-fedora-hyprland-local.toml"
   set_desktop_settings

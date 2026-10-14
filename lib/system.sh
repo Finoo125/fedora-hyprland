@@ -25,28 +25,26 @@ user = "greetd"
 EOF
 }
 
-# greeter_toml LAYOUT VARIANT SESSION WALLPAPER -> /var/lib/noctalia-greeter/greeter.toml
+# greeter_toml SESSION WALLPAPER -> /var/lib/noctalia-greeter/greeter.toml
 greeter_toml() {
   cat <<EOF
 # Written by fedora-hyprland/install.sh on every run.
 [session]
-default = "$3"
+default = "$1"
 
 [keyboard]
-layout = "$1"
-variant = "$2"
+layout = "de"
 
 [appearance]
 scheme = "Ayu"
 theme_mode = "dark"
 EOF
-  if [[ -n "$4" ]]; then printf '\n[appearance.wallpaper]\npath = "%s"\nfill_mode = "crop"\n' "$4"; fi
+  if [[ -n "$2" ]]; then printf '\n[appearance.wallpaper]\npath = "%s"\nfill_mode = "crop"\n' "$2"; fi
 }
 
 setup_greeter() {
-  local kb wall="" src cmd
+  local wall="" src cmd
   cmd=$(greeter_cmd) || die "noctalia-greeter-session not found, so the login screen would not start. Is Terra's noctalia-greeter installed?"
-  kb=$(kb_from_localectl "$(localectl status)")
   write_root /etc/greetd/config.toml "$(greetd_config "$cmd")"
   # The greeter package's tmpfiles entry assumes a "greeter" user; Fedora's greetd user is "greetd".
   write_root /etc/tmpfiles.d/noctalia-greeter.conf "d $GREETER_DIR 0750 greetd greetd -"
@@ -58,7 +56,7 @@ setup_greeter() {
     sudo install -m 644 -o greetd -g greetd "$src" "$wall"
   fi
   write_root "$GREETER_DIR/greeter.toml" \
-    "$(greeter_toml "${kb%%|*}" "${kb#*|}" "$(greeter_session /usr/share/wayland-sessions)" "$wall")"
+    "$(greeter_toml "$(greeter_session /usr/share/wayland-sessions)" "$wall")"
   sudo chown greetd:greetd "$GREETER_DIR/greeter.toml"
   sudo systemctl enable greetd
   sudo systemctl set-default graphical.target

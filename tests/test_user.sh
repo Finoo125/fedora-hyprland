@@ -7,30 +7,9 @@ source lib/user.sh
 
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
-full='   System Locale: LANG=de_DE.UTF-8
-       VC Keymap: de-nodeadkeys
-      X11 Layout: de
-     X11 Variant: nodeadkeys'
-console_only='   System Locale: LANG=de_DE.UTF-8
-       VC Keymap: de-nodeadkeys
-      X11 Layout: (unset)'
-layout_only='      X11 Layout: us'
-nothing='   System Locale: LANG=C.UTF-8
-       VC Keymap: (unset)'
-assert_eq "de|nodeadkeys" "$(kb_from_localectl "$full")"         "X11 layout and variant are used"
-assert_eq "de|nodeadkeys" "$(kb_from_localectl "$console_only")" "console keymap is used when X11 is unset"
-assert_eq "us|"           "$(kb_from_localectl "$layout_only")"  "layout without variant"
-assert_eq "us|"           "$(kb_from_localectl "$nothing")"      "falls back to us"
-KBD_MODEL_MAP=tests/fixtures/kbd-model-map
-assert_eq "de|nodeadkeys" "$(kb_from_localectl "       VC Keymap: de-latin1-nodeadkeys")" "console keymap de-latin1-nodeadkeys maps to de/nodeadkeys"
-assert_eq "de|"           "$(kb_from_localectl "       VC Keymap: de-latin1")"            "console keymap de-latin1 maps to de"
-assert_eq "gb|"           "$(kb_from_localectl "       VC Keymap: uk")"                   "console keymap uk maps to gb"
-assert_eq "us|intl"       "$(kb_from_localectl "       VC Keymap: us-acentos")"           "console keymap us-acentos maps to us/intl"
-assert_eq "de|nodeadkeys" "$(kb_from_localectl "$console_only")"                          "keymaps missing from the map still split on the dash"
-
-stub=$(hypr_stub /home/u/.local/share/fedora-hyprland de nodeadkeys)
+stub=$(hypr_stub /home/u/.local/share/fedora-hyprland)
 assert_true "stub loads the repo defaults" grep -qF 'require("/home/u/.local/share/fedora-hyprland/config/hypr/main.lua")("/home/u/.local/share/fedora-hyprland")' <<<"$stub"
-assert_true "stub sets the keyboard layout" grep -qF 'kb_layout = "de", kb_variant = "nodeadkeys"' <<<"$stub"
+assert_false "keyboard layout lives in the repo defaults, not the stub" grep -qF 'kb_layout' <<<"$stub"
 assert_false "GPU settings no longer live in the Hyprland stub" grep -qF 'gpu' <<<"$stub"
 
 printf '# comment\n\nhttps://example.org/a/one.jpg\nhttps://example.org/b/two.png\n' >"$tmp/list.txt"

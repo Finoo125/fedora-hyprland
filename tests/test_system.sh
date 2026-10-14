@@ -20,11 +20,10 @@ conf=$(greetd_config /usr/bin/noctalia-greeter-session)
 assert_true "greetd starts the greeter session wrapper" grep -qx 'command = "/usr/bin/noctalia-greeter-session"' <<<"$conf"
 assert_true "greetd uses Fedora's greetd user"         grep -qx 'user = "greetd"' <<<"$conf"
 
-toml=$(greeter_toml de nodeadkeys hyprland-uwsm /var/lib/noctalia-greeter/wallpaper.jpg)
-assert_true "greeter keyboard layout"  grep -qx 'layout = "de"' <<<"$toml"
-assert_true "greeter keyboard variant" grep -qx 'variant = "nodeadkeys"' <<<"$toml"
+toml=$(greeter_toml hyprland-uwsm /var/lib/noctalia-greeter/wallpaper.jpg)
+assert_true "greeter keyboard is German" grep -qx 'layout = "de"' <<<"$toml"
 assert_true "greeter default session"  grep -qx 'default = "hyprland-uwsm"' <<<"$toml"
 assert_true "greeter uses Ayu"         grep -qx 'scheme = "Ayu"' <<<"$toml"
 assert_true "greeter wallpaper"        grep -qx 'path = "/var/lib/noctalia-greeter/wallpaper.jpg"' <<<"$toml"
-assert_false "no wallpaper section without a wallpaper" grep -q 'appearance.wallpaper' <<<"$(greeter_toml us '' hyprland '')"
+assert_false "no wallpaper section without a wallpaper" grep -q 'appearance.wallpaper' <<<"$(greeter_toml hyprland '')"
 finish

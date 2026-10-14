@@ -4,7 +4,7 @@ local M = {}
 
 hl.monitor({ output = "desc:HP Inc. HP E27q G5", mode = "preferred", position = "0x0", scale = 1, transform = 3 }) -- upside down? use 1
 hl.monitor({ output = "desc:HP Inc. HP X27i", mode = "highrr", position = "1440x0", scale = 1 }) -- 144 Hz if the dock allows
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" }) -- anything else
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 }) -- anything else
 
 -- FALLBACK/HEADLESS are outputs Hyprland creates itself when nothing is connected.
 function M.is_external(name)
@@ -25,7 +25,7 @@ function M.apply(removed)
   for _, m in ipairs(hl.get_monitors({ all = true })) do
     if m.name:match("^eDP") then
       if on then
-        hl.monitor({ output = m.name, mode = "preferred", position = "auto", scale = "auto" })
+        hl.monitor({ output = m.name, mode = "preferred", position = "auto", scale = 1 })
       else
         hl.monitor({ output = m.name, disabled = true })
       end
