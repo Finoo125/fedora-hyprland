@@ -96,14 +96,21 @@ check(#calls.dispatched == 0, "removing another monitor moves nothing")
 
 check(desks.step(2, 1) == 3 and desks.step(2, -1) == 1, "Ctrl+Super+arrows step one desk")
 check(desks.step(13, 1) == 4, "stepping from the portrait monitor uses its desk number")
-check(desks.step(1, -1) == 1 and desks.step(4, 1) == 4, "stepping stops at the first and last desk")
-check(desks.step(5, -1) == 4, "from a stray workspace 5, Left goes to the last desk")
+check(desks.step(1, -1) == 1 and desks.step(5, 1) == 5, "stepping stops at the first and last of five desks")
+check(desks.step(6, -1) == 5, "from a stray workspace 6, Left goes to the last desk")
 
 state.ws = { id = 12 }
 calls.dispatched = {}
 calls.binds["CONTROL + SUPER + Right"]()
 check(#calls.dispatched == 2 and calls.dispatched[1].args.workspace == "13" and calls.dispatched[2].args.workspace == "3",
   "docked Ctrl+Super+Right from desk 2 switches both monitors to desk 3")
+
+state.ws = { id = 13 }
+calls.dispatched = {}
+calls.binds["CONTROL + SUPER + SHIFT + Left"]()
+check(#calls.dispatched == 3 and calls.dispatched[1].args.workspace == "12" and calls.dispatched[1].args.follow == false
+  and calls.dispatched[3].args.workspace == "2",
+  "Ctrl+Super+Shift+Left moves a portrait window to portrait desk 2, then both monitors follow")
 
 -- Undocked start: desks belong to the missing main monitor, so the session must focus desk 1 explicitly.
 state.active = { { name = "eDP-1", description = "BOE 0x0BCA" } }

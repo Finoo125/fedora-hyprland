@@ -1,7 +1,7 @@
--- Four linked desks: Super+N shows workspace N on the main monitor and 10+N on the portrait monitor.
+-- Five linked desks: Super+N shows workspace N on the main monitor and 10+N on the portrait monitor.
 -- Super+Shift+N moves the focused window to desk N on the monitor it's on.
--- Ctrl+Super+Left/Right steps to the previous/next desk, like Windows. Every session starts on desk 1.
-local M = { COUNT = 4 }
+-- Ctrl+Super+Left/Right steps to the previous/next desk, like Windows; with Shift the window comes along. Every session starts on desk 1.
+local M = { COUNT = 5 }
 local MAIN = "desc:HP Inc. HP X27i"
 local PORTRAIT = "desc:HP Inc. HP E27q G5"
 local PORTRAIT_MODEL = "HP E27q G5"
@@ -12,7 +12,7 @@ function M.focus_order(n, portrait_connected)
   return { n }
 end
 
--- Desk a workspace belongs to: main 1-4, portrait 11-14.
+-- Desk a workspace belongs to: main 1-5, portrait 11-15.
 function M.desk_of(ws_id)
   if ws_id > 10 then return ws_id - 10 end
   return ws_id
@@ -23,13 +23,13 @@ function M.step(ws_id, delta)
   return math.max(1, math.min(M.COUNT, M.desk_of(ws_id) + delta))
 end
 
--- Portrait desks are workspaces 11-14.
+-- Portrait desks are workspaces 11-15.
 function M.move_target(active_ws_id, n)
   if active_ws_id > 10 then return 10 + n end
   return n
 end
 
--- After undocking, windows on 11-14 move to 1-4 so nothing is stranded.
+-- After undocking, windows on 11-15 move to 1-5 so nothing is stranded.
 function M.strays(windows)
   local out = {}
   for _, w in ipairs(windows) do
@@ -68,8 +68,16 @@ for n = 1, M.COUNT do
 end
 hl.bind("CONTROL + SUPER + Left", function() focus_desk(M.step(active_ws_id(), -1)) end)
 hl.bind("CONTROL + SUPER + Right", function() focus_desk(M.step(active_ws_id(), 1)) end)
+for key, delta in pairs({ Left = -1, Right = 1 }) do
+  hl.bind("CONTROL + SUPER + SHIFT + " .. key, function()
+    local id = active_ws_id()
+    local n = M.step(id, delta)
+    hl.dispatch(hl.dsp.window.move({ workspace = tostring(M.move_target(id, n)), follow = false }))
+    focus_desk(n)
+  end)
+end
 
--- Desks 1-4 belong to the main monitor, so without it Hyprland would open the laptop panel on workspace 5.
+-- Desks 1-5 belong to the main monitor, so without it Hyprland would open the laptop panel on workspace 6.
 -- Start on desk 1 instead; the first apps then open there too.
 hl.on("hyprland.start", function() focus_desk(1) end)
 
