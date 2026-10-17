@@ -10,6 +10,8 @@ hl.config({
     blur = { enabled = true, size = 3, passes = 2, vibrancy = 0.1696 },
   },
   misc = { disable_hyprland_logo = true, force_default_wallpaper = 0 },
+  -- X11 apps (Steam, some games) draw at full resolution instead of being upscaled blurry on a scaled laptop panel.
+  xwayland = { force_zero_scaling = true },
 })
 
 -- Fast animations from CachyOS (Hyprland's built-in default is a slow 800 ms for everything).

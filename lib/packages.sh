@@ -15,7 +15,7 @@ gpgkey=https://packages.microsoft.com/keys/microsoft.asc'
 DNF_BASE=(dnf5-plugins flatpak pciutils jq)
 DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
-  gnome-keyring gnome-keyring-pam dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
+  gnome-keyring gnome-keyring-pam gcr dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
   xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
@@ -120,4 +120,6 @@ install_packages() {
 
 install_flatpaks() {
   sudo flatpak install -y --noninteractive flathub "${FLATPAKS[@]}"
+  # Cursors (and icons) installed for your user live in ~/.local/share/icons, which Flatpaks can't see otherwise.
+  flatpak override --user --filesystem=xdg-data/icons:ro
 }

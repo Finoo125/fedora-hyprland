@@ -39,4 +39,8 @@ assert_eq "balanced=balanced" "$(sed -n '/^\[battery\]/,$p' <<<"$ppd" | grep '^b
 assert_true "power saver is still available" grep -qx 'power-saver=powersave' <<<"$ppd"
 # tuned-ppd exits with "Duplicate profile mapping" unless every PPD profile maps to its own TuneD profile.
 assert_eq "" "$(sed -n '/^\[profiles\]/,/^\[/p' <<<"$ppd" | grep -v '^#' | grep '=' | cut -d= -f2 | sort | uniq -d)" "no TuneD profile is mapped twice on AC"
+printf 'processor\t: 0\nvendor_id\t: GenuineIntel\n' >"$tmp/intel"
+printf 'processor\t: 0\nvendor_id\t: AuthenticAMD\n' >"$tmp/amd"
+assert_true  "Intel CPU gets thermald" cpu_is_intel "$tmp/intel"
+assert_false "AMD CPU skips thermald"  cpu_is_intel "$tmp/amd"
 finish

@@ -43,6 +43,18 @@ check(not mon.internal_enabled({ { name = "eDP-1" }, { name = "DP-5" } }), "dock
 check(mon.internal_enabled({ { name = "FALLBACK" } }), "last external unplugged: panel comes back")
 check(mon.internal_enabled({}), "no monitors at all: panel on")
 
+check(mon.panel_scale(1920, 1080, 340) == 1, "15.6\" 1080p panel: scale 1")
+check(math.abs(mon.panel_scale(2256, 1504, 285) - 188 / 120) < 1e-9, "Framework 13 2.2K: 1.566667 (1440x960), not the invalid 1.5")
+check(mon.panel_scale(2880, 1920, 285) == 2, "Framework 13 2.8K: scale 2")
+check(mon.panel_scale(2560, 1600, 345) == 1.6, "Framework 16 2.5K: scale 1.6")
+check(mon.panel_scale(0, 0, 0) == 1, "panel without size (disabled): scale 1")
+
+state.all = { { name = "eDP-1", description = "BOE 0x0BCA", width = 2256, height = 1504, physical_width = 285 } }
+state.active = state.all
+calls.monitors = {}
+mon.apply()
+check(math.abs(calls.monitors[1].scale - 188 / 120) < 1e-9, "apply() turns the panel on at its own scale")
+
 state.active = { { name = "DP-5", description = "HP Inc. HP X27i CNK0420XTM" } }
 state.all = { { name = "eDP-1", description = "BOE 0x0BCA" }, state.active[1] }
 calls.monitors = {}

@@ -179,6 +179,9 @@ setup_power() {
   sudo systemctl try-restart tuned-ppd
 }
 
+# cpu_is_intel CPUINFO -> 0 on an Intel CPU. thermald only supports Intel; on AMD it refuses to start.
+cpu_is_intel() { grep -q '^vendor_id[[:space:]]*:[[:space:]]*GenuineIntel' "$1"; }
+
 # enabled_units PATTERN -> enabled unit files matching PATTERN, one per line.
 enabled_units() { systemctl list-unit-files --state=enabled --no-legend "$1" | awk '{print $1}'; }
 
@@ -189,13 +192,17 @@ setup_system() {
   setup_snapper
   setup_icons
   setup_power
-  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd thermald fwupd-refresh.timer
+  sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd fwupd-refresh.timer
+  if cpu_is_intel /proc/cpuinfo; then sudo systemctl enable --now thermald; fi
   # Docker starts on first use instead of at boot, where it made boot wait ~7 s for the network.
   sudo systemctl disable docker.service
   sudo systemctl enable docker.socket
   sudo usermod -aG docker "$USER"
   # Ghostty keeps one instance running per user, so Super+Return opens windows instantly.
   sudo systemctl --global enable app-com.mitchellh.ghostty.service
+  # The keyring's SSH agent: SSH keys are unlocked once at login instead of asking for the passphrase on every git push.
+  # Its socket sets SSH_AUTH_SOCK for the session itself.
+  sudo systemctl --global enable gcr-ssh-agent.socket
   # The Minimal Install brings abrt (crash reporting to Fedora); its daemons only cost time at boot and login.
   mapfile -t abrt < <(enabled_units 'abrt*')
   if ((${#abrt[@]})); then sudo systemctl disable --now "${abrt[@]}"; fi
