@@ -22,3 +22,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Every package and Flatpak exists
         run: bash tests/repoquery.sh
+      - name: No package pulls in another desktop
+        run: bash tests/no_foreign_desktop.sh

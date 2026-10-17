@@ -53,6 +53,22 @@ all_dnf_packages() {
     "${DNF_GAMING[@]}" "${DNF_SYSTEM[@]}" "${DNF_DEV[@]}" "${DNF_NVIDIA[@]}" "${DNF_SECUREBOOT[@]}" "${DNF_AMD[@]}" ffmpeg
 }
 
+# main_dnf_packages -> the packages install_packages installs in one dnf transaction, one per line.
+main_dnf_packages() {
+  printf '%s\n' "${DNF_DESKTOP[@]}" "${DNF_APPS[@]}" "${DNF_STORAGE[@]}" "${DNF_CLI[@]}" "${DNF_SYSTEM[@]}" \
+    "${DNF_GAMING[@]}" "${DNF_DEV[@]}"
+}
+
+# Other desktops' shells, sessions and login managers. A dependency that drags one in (as GParted once did
+# with GNOME Shell) installs hundreds of MB the Hyprland setup never uses.
+FOREIGN_DESKTOP=(gnome-shell gnome-session mutter gdm kwin plasma-workspace sddm cinnamon xfce4-session
+  mate-session-manager lightdm)
+
+# foreign_desktop_packages: stdin = `dnf install --assumeno` output -> the FOREIGN_DESKTOP packages it would install.
+foreign_desktop_packages() {
+  awk 'NF >= 5 {print $1}' | grep -xF -f <(printf '%s\n' "${FOREIGN_DESKTOP[@]}") || true
+}
+
 # has_amd_gpu LINES -> 0 when LINES (`lspci -d ::03xx`) contain an AMD/ATI GPU.
 has_amd_gpu() { grep -qE '\b(AMD|ATI)\b' <<<"$1"; }
 
@@ -88,8 +104,9 @@ setup_repos() {
 }
 
 install_packages() {
-  sudo dnf install -y "${DNF_DESKTOP[@]}" "${DNF_APPS[@]}" "${DNF_STORAGE[@]}" "${DNF_CLI[@]}" "${DNF_SYSTEM[@]}" \
-    "${DNF_GAMING[@]}" "${DNF_DEV[@]}"
+  local pkgs
+  mapfile -t pkgs < <(main_dnf_packages)
+  sudo dnf install -y "${pkgs[@]}"
   # RPM Fusion's full ffmpeg replaces Fedora's ffmpeg-free; the multimedia group adds the matching GStreamer plugins.
   sudo dnf install -y --allowerasing ffmpeg
   sudo dnf group install -y multimedia --setopt=install_weak_deps=False --exclude=PackageKit-gstreamer-plugin
