@@ -5,7 +5,7 @@ in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora bas
 
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
 Ayu colors everywhere, Papirus icons, Ghostty, Thunar (NAS shares, Android/iPhone, cameras, NTFS/exFAT/Mac drives),
-Firefox, codecs, gaming (Steam, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
+Firefox, codecs, gaming (Steam, Lutris, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
 Podman, Python 3.12–3.14, Node.js LTS), apps as RPMs where one exists (Flathub for the rest), fingerprint login,
 printing with common printer drivers, VPN (OpenVPN, OpenConnect, WireGuard), automatic btrfs snapshots before every
 update plus a monthly scrub, Pika Backup, and one `update` command for everything.
