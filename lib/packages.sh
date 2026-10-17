@@ -23,9 +23,11 @@ DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumb
   file-roller firefox mpv mpv-mpris qview papers gnome-text-editor gnome-calculator gnome-software kde-connect
   pavucontrol gnome-disk-utility thunderbird vlc telegram-desktop discord flatseal
   signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center)
+# GParted requires a polkit agent package; Noctalia is the agent but its RPM doesn't say so, and dnf would
+# pull in all of GNOME Shell instead. xfce-polkit (42 KB) satisfies it and only autostarts on XFCE.
 # Drives, network shares and devices in Thunar. gvfs-fuse gives smb://, mtp:// etc. a real path under
 # /run/user/$UID/gvfs so non-GTK apps (qView, mpv, ...) can open files there too.
-DNF_STORAGE=(gparted gvfs gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive
+DNF_STORAGE=(gparted xfce-polkit gvfs gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive
   udisks2 udisks2-btrfs ntfs-3g exfatprogs dosfstools udftools hfsplus-tools btrfs-progs xfsprogs
   cifs-utils nfs-utils samba-client fuse-sshfs libimobiledevice-utils ifuse unrar)
 DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate rsync ImageMagick)
