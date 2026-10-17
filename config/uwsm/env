@@ -1,7 +1,7 @@
 # Environment for the Hyprland session and every app it starts (read by uwsm).
-export XCURSOR_THEME=Bibata-Original-Ice
-export XCURSOR_SIZE=24
-export HYPRCURSOR_SIZE=24
+export XCURSOR_THEME=Classic-pointer
+export XCURSOR_SIZE=32
+export HYPRCURSOR_SIZE=32
 export QT_QPA_PLATFORMTHEME=qt6ct
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 export TERMINAL=ghostty

@@ -5,6 +5,10 @@ ARTCRAFT_REPO="storytold/craft-launcher" # official; github.com/craft-launcher/c
 ARTCRAFT_APPIMAGE="$HOME/Applications/ArtCraft-Launcher.AppImage"
 TOOLBOX_DIR="$HOME/.local/share/JetBrains/Toolbox"
 NERD_FONT_DIR="$HOME/.local/share/fonts/JetBrainsMonoNerd" # Fedora packages no Nerd Fonts
+CURSOR_REPO="https://github.com/Finoo125/Classic-pointer-cursors.git"
+CURSOR_TAG="v1.0" # bump to update the cursors
+CURSOR_THEMES=(Classic-pointer Classic-pointer-dark)
+ICON_DIR="$HOME/.local/share/icons"
 
 # sha256_ok FILE SUMS_FILE -> 0 when FILE's sha256 is listed for its basename in SUMS_FILE.
 sha256_ok() {
@@ -72,10 +76,29 @@ install_nerd_font() {
   fc-cache -f "$NERD_FONT_DIR" >/dev/null
 }
 
+# install_cursors: the Classic Pointer cursors (light is the default, dark is selectable) from a pinned tag.
+install_cursors() {
+  local tmp theme
+  [[ -d "$ICON_DIR/${CURSOR_THEMES[0]}/cursors" && -d "$ICON_DIR/${CURSOR_THEMES[1]}/cursors" ]] && return 0
+  tmp=$(mktemp -d)
+  if ! git clone -q -c advice.detachedHead=false --depth 1 --branch "$CURSOR_TAG" "$CURSOR_REPO" "$tmp/src"; then
+    warn "Could not download the Classic Pointer cursors, so the default cursor is used."
+    rm -rf "$tmp"
+    return 0
+  fi
+  mkdir -p "$ICON_DIR"
+  for theme in "${CURSOR_THEMES[@]}"; do
+    rm -rf "${ICON_DIR:?}/$theme"
+    cp -r "$tmp/src/themes/$theme" "$ICON_DIR/$theme"
+  done
+  rm -rf "$tmp"
+}
+
 install_apps() {
   install_jetbrains_toolbox
   install_claude_code
   install_nerd_font
+  install_cursors
 }
 
 # install_artcraft: official AppImage, checksum-verified, never run as root.

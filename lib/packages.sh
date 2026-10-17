@@ -2,7 +2,7 @@
 # Package sources and package lists. Every function here is safe to run again.
 
 COPR_REPO="lionheartp/Hyprland"
-TERRA_ALLOW="noctalia-greeter*,ghostty*,bibata-cursor-theme*,signal-desktop*,heroic-games-launcher*,protonplus*,faugus-launcher*,mission-center*"
+TERRA_ALLOW="noctalia-greeter*,ghostty*,signal-desktop*,heroic-games-launcher*,protonplus*,faugus-launcher*,mission-center*"
 VSCODE_REPO='[code]
 name=Visual Studio Code
 baseurl=https://packages.microsoft.com/yumrepos/vscode
@@ -16,7 +16,7 @@ DNF_BASE=(dnf5-plugins flatpak pciutils jq)
 DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
   gnome-keyring gnome-keyring-pam dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
-  bibata-cursor-theme xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
+  xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
 DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer
@@ -25,7 +25,7 @@ DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumb
   signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center)
 # Drives, network shares and devices in Thunar. gvfs-fuse gives smb://, mtp:// etc. a real path under
 # /run/user/$UID/gvfs so non-GTK apps (qView, mpv, ...) can open files there too.
-DNF_STORAGE=(gvfs gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive
+DNF_STORAGE=(gparted gvfs gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive
   udisks2 udisks2-btrfs ntfs-3g exfatprogs dosfstools udftools hfsplus-tools btrfs-progs xfsprogs
   cifs-utils nfs-utils samba-client fuse-sshfs libimobiledevice-utils ifuse unrar)
 DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate rsync ImageMagick)
@@ -71,7 +71,7 @@ setup_repos() {
     # shellcheck disable=SC2016 # $releasever is expanded by dnf, not by the shell
     sudo dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
   fi
-  # Terra only provides the greeter, Ghostty, the Bibata cursor and apps Fedora and RPM Fusion don't package;
+  # Terra only provides the greeter, Ghostty and apps Fedora and RPM Fusion don't package;
   # nothing else from it may replace Fedora packages.
   sudo dnf config-manager setopt "terra.includepkgs=$TERRA_ALLOW"
   for repo in $(dnf repo list --all | terra_extra_repos); do
