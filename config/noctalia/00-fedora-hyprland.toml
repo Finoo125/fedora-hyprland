@@ -7,7 +7,7 @@ builtin = "Ayu"
 
 [theme.templates]
 enable_builtin_templates = true
-builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "btop", "hyprland", "firefox"]   # Firefox also needs the Pywalfox extension
+builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "kitty", "btop", "hyprland", "firefox"]   # Firefox also needs the Pywalfox extension
 
 [shell]
 polkit_agent = true   # password prompts for Btrfs Assistant, GNOME Software and other admin actions

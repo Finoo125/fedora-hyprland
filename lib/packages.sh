@@ -19,7 +19,7 @@ DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-des
   xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
-DNF_APPS=(ghostty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer
+DNF_APPS=(ghostty kitty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer
   file-roller firefox mpv mpv-mpris qview papers gnome-text-editor gnome-calculator gnome-software kde-connect
   pavucontrol gnome-disk-utility thunderbird vlc telegram-desktop discord flatseal
   signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center)

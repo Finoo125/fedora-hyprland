@@ -5,7 +5,7 @@ in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora bas
 
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
 Ayu colors everywhere, Papirus icons, Classic Pointer cursors (light and dark),
-Ghostty, Thunar (NAS shares, Android/iPhone, cameras, NTFS/exFAT/Mac drives),
+Ghostty and kitty (both in the desktop's colors), Thunar (NAS shares, Android/iPhone, cameras, NTFS/exFAT/Mac drives),
 Firefox, codecs, gaming (Steam, Lutris, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
 Podman, Python 3.12–3.14, Node.js LTS), apps as RPMs where one exists (Flathub for the rest), fingerprint login,
 printing with common printer drivers, VPN (OpenVPN, OpenConnect, WireGuard), automatic btrfs snapshots before every
@@ -144,7 +144,7 @@ times. Pick **Power saver** when you need the battery to last.
 | Yours (created once, never overwritten) | Regenerated on every install.sh run |
 |---|---|
 | `~/.config/hypr/hyprland.lua` (put overrides at the bottom) | `~/.config/environment.d/60-fedora-hyprland-gpu.conf` (NVIDIA only) |
-| `~/.config/ghostty/config`, `~/.config/gtk-*/settings.ini`, `~/.config/qt6ct/qt6ct.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
+| `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/qt6ct/qt6ct.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
 | `~/.config/mimeapps.list`, `~/.config/uwsm/env` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
 | any other `~/.config/noctalia/*.toml`, and everything you change in Noctalia's Settings | |
 
