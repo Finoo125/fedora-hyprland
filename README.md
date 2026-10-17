@@ -4,9 +4,11 @@ One command turns a fresh **Fedora 44 Minimal** install into a complete **Hyprla
 in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora base.
 
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
-Ayu colors everywhere, Papirus icons, Ghostty, Thunar, Firefox, codecs, gaming (Steam, ProtonPlus, Heroic),
-dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker, Podman, Python 3.12–3.14, Node.js LTS), Flathub apps,
-fingerprint login, printing, automatic btrfs snapshots before every update, Pika Backup, and one `update` command for everything.
+Ayu colors everywhere, Papirus icons, Ghostty, Thunar (NAS shares, Android/iPhone, cameras, NTFS/exFAT/Mac drives),
+Firefox, codecs, gaming (Steam, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
+Podman, Python 3.12–3.14, Node.js LTS), apps as RPMs where one exists (Flathub for the rest), fingerprint login,
+printing with common printer drivers, VPN (OpenVPN, OpenConnect, WireGuard), automatic btrfs snapshots before every
+update plus a monthly scrub, Pika Backup, and one `update` command for everything.
 
 ## Before you start
 

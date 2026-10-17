@@ -79,7 +79,8 @@ setup_user() {
   xdg-user-dirs-update
   mkdir -p "$HOME/.config/noctalia"
   ln -sfn "$REPO_DIR/config/noctalia/00-fedora-hyprland.toml" "$HOME/.config/noctalia/00-fedora-hyprland.toml"
-  for item in ghostty/config uwsm/env gtk-3.0/settings.ini gtk-4.0/settings.ini mimeapps.list; do
+  for item in ghostty/config uwsm/env gtk-3.0/settings.ini gtk-4.0/settings.ini mimeapps.list \
+    xdg-desktop-portal/hyprland-portals.conf; do
     copy_once "$REPO_DIR/config/$item" "$HOME/.config/$item"
   done
   write_once "$HOME/.config/qt6ct/qt6ct.conf" "$(qt6ct_conf "$HOME")"

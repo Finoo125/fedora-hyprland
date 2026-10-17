@@ -77,6 +77,9 @@ setup_snapper() {
   sudo snapper -c root get-config >/dev/null 2>&1 || sudo snapper -c root create-config /
   sudo snapper -c root set-config NUMBER_LIMIT=10 NUMBER_LIMIT_IMPORTANT=5 TIMELINE_CREATE=no
   sudo install -D -m 644 "$REPO_DIR/config/snapper.actions" /etc/dnf/libdnf5-plugins/actions.d/snapper.actions
+  # Monthly scrub reads every block and checks its checksum, so a failing disk shows up before the backup is needed.
+  # The weekly balance stays off: current btrfs doesn't need it and it costs a lot of disk I/O.
+  sudo systemctl enable --now btrfsmaintenance-refresh.path btrfs-scrub.timer
 }
 
 # home_snapshots_possible -> 0 when /home is its own btrfs subvolume (Fedora's default layout).
