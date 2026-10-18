@@ -200,6 +200,11 @@ setup_system() {
     # e.g. Panther Lake). It exits on CPUs it doesn't support, which is fine.
     sudo systemctl enable --now intel_lpmd || warn "intel_lpmd didn't start; this CPU is probably older than Meteor Lake."
   fi
+  # Windows games (and launchers like Battle.net) trip split-lock traps, and the kernel answers each one by slowing
+  # the game down on purpose, which shows up as stutter. That guard is meant for shared servers; SteamOS and Bazzite
+  # turn it off too.
+  write_root /etc/sysctl.d/60-fedora-hyprland-gaming.conf 'kernel.split_lock_mitigate = 0'
+  sudo sysctl -q -p /etc/sysctl.d/60-fedora-hyprland-gaming.conf || warn "The split-lock setting applies after a reboot."
   # Docker starts on first use instead of at boot, where it made boot wait ~7 s for the network.
   sudo systemctl disable docker.service
   sudo systemctl enable docker.socket
