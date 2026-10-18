@@ -182,8 +182,9 @@ setup_power() {
 # cpu_is_intel CPUINFO -> 0 on an Intel CPU. thermald only supports Intel; on AMD it refuses to start.
 cpu_is_intel() { grep -q '^vendor_id[[:space:]]*:[[:space:]]*GenuineIntel' "$1"; }
 
-# enabled_units PATTERN -> enabled unit files matching PATTERN, one per line.
-enabled_units() { systemctl list-unit-files --state=enabled --no-legend "$1" | awk '{print $1}'; }
+# enabled_units PATTERN -> enabled unit files matching PATTERN, one per line. systemctl exits 1 when none match,
+# which is not an error (and would fire install.sh's ERR trap from inside a process substitution).
+enabled_units() { systemctl list-unit-files --state=enabled --no-legend "$1" | awk '{print $1}' || true; }
 
 setup_system() {
   local -a abrt

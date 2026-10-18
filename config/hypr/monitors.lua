@@ -7,12 +7,13 @@ hl.monitor({ output = "desc:HP Inc. HP X27i", mode = "highrr", position = "1440x
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 }) -- anything else
 
 -- panel_scale(WIDTH, HEIGHT, PHYSICAL_WIDTH_MM) -> scale for the laptop panel from its pixel density: 1 up to ~160 PPI
--- (15.6" 1080p), 1.5 up to ~230 PPI (Framework 13 2.2K), else 2 (2.8K/3K). Snapped to the nearest multiple of 1/120
--- that divides both sides, since Hyprland rejects others (2256x1504 -> 1.566667, i.e. 1440x960).
+-- (15.6" 1080p), 1.5 up to ~230 PPI (Framework 13 2.2K), else 1.6 (2.8K/3K: 1800x1200 on the Framework 13 Pro).
+-- Snapped to the nearest multiple of 1/120 that divides both sides, since Hyprland rejects others
+-- (2256x1504 -> 1.566667, i.e. 1440x960).
 function M.panel_scale(width, height, physical_width)
   if not (width and height and physical_width) or width <= 0 or height <= 0 or physical_width <= 0 then return 1 end
   local ppi = width / (physical_width / 25.4)
-  local target = ppi < 160 and 1 or ppi < 230 and 1.5 or 2
+  local target = ppi < 160 and 1 or ppi < 230 and 1.5 or 1.6
   local base = math.floor(target * 120 + 0.5)
   for d = 0, 30 do
     for _, n in ipairs({ base - d, base + d }) do
@@ -57,5 +58,9 @@ end
 hl.on("hyprland.start", function() M.apply() end)
 hl.on("monitor.added", function() M.apply() end)
 hl.on("monitor.removed", function(m) M.apply(m) end)
+-- A config reload (Noctalia's colors trigger one) runs this file again in a fresh Lua state, bringing back the
+-- catch-all rule at scale 1 with no monitor event to follow. Applying here keeps the panel's scale and dock state.
+-- At login there are no monitors yet; hyprland.start covers that.
+M.apply()
 
 return M

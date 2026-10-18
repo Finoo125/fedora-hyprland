@@ -45,7 +45,7 @@ check(mon.internal_enabled({}), "no monitors at all: panel on")
 
 check(mon.panel_scale(1920, 1080, 340) == 1, "15.6\" 1080p panel: scale 1")
 check(math.abs(mon.panel_scale(2256, 1504, 285) - 188 / 120) < 1e-9, "Framework 13 2.2K: 1.566667 (1440x960), not the invalid 1.5")
-check(mon.panel_scale(2880, 1920, 285) == 2, "Framework 13 2.8K: scale 2")
+check(mon.panel_scale(2880, 1920, 285) == 1.6, "Framework 13 2.8K: scale 1.6 (1800x1200)")
 check(mon.panel_scale(2560, 1600, 345) == 1.6, "Framework 16 2.5K: scale 1.6")
 check(mon.panel_scale(0, 0, 0) == 1, "panel without size (disabled): scale 1")
 
@@ -75,6 +75,15 @@ check(calls.monitors[1].output == "eDP-1" and not calls.monitors[1].disabled, "u
 calls.monitors = {}
 calls.events["monitor.added"][1]({ name = "DP-5", description = "HP Inc. HP X27i" })
 check(calls.monitors[1].output == "eDP-1" and calls.monitors[1].disabled == true, "plugging in a monitor turns the panel off")
+
+-- A config reload runs monitors.lua again with no monitor event to follow: loading it must set the panel's scale.
+state.all = { { name = "eDP-1", description = "CSOT MND508ZB1-1", width = 2880, height = 1920, physical_width = 280 } }
+state.active = state.all
+calls.monitors = {}
+dofile("config/hypr/monitors.lua")
+local panel_rule
+for _, m in ipairs(calls.monitors) do if m.output == "eDP-1" then panel_rule = m end end
+check(panel_rule and panel_rule.scale == 1.6 and panel_rule.disabled == false, "config reload keeps the Framework 13 Pro 2.8K panel at scale 1.6")
 
 -- input.lua
 local kb_file = os.tmpname()

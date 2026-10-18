@@ -146,7 +146,8 @@ remove_replaced_apps() {
   local marker="$STATE_DIR/replaced-apps-removed" transaction extra
   local -a installed=()
   [[ -f "$marker" ]] && return 0
-  mapfile -t installed < <(rpm -q --qf '%{NAME}\n' "${REPLACED_PACKAGES[@]}" 2>/dev/null | grep -v ' ')
+  # `|| true`: none installed is fine, and the process substitution would otherwise fire install.sh's ERR trap.
+  mapfile -t installed < <(rpm -q --qf '%{NAME}\n' "${REPLACED_PACKAGES[@]}" 2>/dev/null | grep -v ' ' || true)
   if ((${#installed[@]})); then
     transaction=$(LC_ALL=C sudo dnf remove --assumeno --noautoremove "${installed[@]}" 2>&1 || true)
     extra=$(removal_names <<<"$transaction" | grep -vxF -f <(printf '%s\n' "${installed[@]}") || true)

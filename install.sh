@@ -25,7 +25,8 @@ optional_steps() {
   local fp
   fp=$(fprintd-list "$USER" 2>&1 || true)
   if grep -q 'no fingers enrolled' <<<"$fp" && ask_once fingerprint "Enroll a fingerprint now (sudo, login, lock screen)?" y; then
-    fprintd-enroll || warn "Fingerprint enrollment didn't finish. Run fprintd-enroll later."
+    # As root: enrolling needs a polkit agent for the user, and a text console (first install) has none.
+    sudo fprintd-enroll "$USER" || warn "Fingerprint enrollment didn't finish. Run fprintd-enroll later."
   fi
   if home_snapshots_possible; then
     if home_snapshots_enabled; then
