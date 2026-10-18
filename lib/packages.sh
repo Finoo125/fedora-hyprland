@@ -15,8 +15,8 @@ gpgkey=https://packages.microsoft.com/keys/microsoft.asc'
 DNF_BASE=(dnf5-plugins flatpak pciutils jq)
 DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
-  gnome-keyring gnome-keyring-pam gcr dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland hyprqt6engine plasma-breeze-qt6 nwg-look adw-gtk3-theme papirus-icon-theme
-  xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
+  gnome-keyring gnome-keyring-pam gcr dconf ddcutil bolt polkit qt6-qtwayland hyprqt6engine plasma-breeze-qt6 nwg-look adw-gtk3-theme papirus-icon-theme
+  google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
 # KDE apps: they read Noctalia's KDE color scheme (kdeglobals), so they match the desktop in Hyprland and in Plasma.
@@ -54,6 +54,8 @@ REPLACED_PACKAGES=(Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthum
 # Only apps without an RPM in Fedora, RPM Fusion or Terra; everything else comes from dnf.
 FLATPAKS=(com.rtosta.zapzap com.bitwarden.desktop md.obsidian.Obsidian io.dbeaver.DBeaverCommunity
   org.localsend.localsend_app it.mijorus.gearlever org.gnome.World.PikaBackup)
+# adw-gtk3 for GTK3 Flatpaks (DBeaver); without it they fall back to light Adwaita. Noctalia switches between the two.
+FLATPAK_THEMES=(org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark)
 
 # all_dnf_packages -> every dnf package the installer may install, one per line (CI checks they exist).
 all_dnf_packages() {
@@ -126,7 +128,8 @@ setup_repos() {
 install_packages() {
   local pkgs
   mapfile -t pkgs < <(main_dnf_packages)
-  sudo dnf install -y "${pkgs[@]}"
+  # nwg-panel supplements hyprland, so dnf would add a second panel next to Noctalia's bar.
+  sudo dnf install -y --exclude=nwg-panel "${pkgs[@]}"
   # RPM Fusion's full ffmpeg replaces Fedora's ffmpeg-free; the multimedia group adds the matching GStreamer plugins.
   sudo dnf install -y --allowerasing ffmpeg
   sudo dnf group install -y multimedia --setopt=install_weak_deps=False --exclude=PackageKit-gstreamer-plugin
@@ -162,7 +165,11 @@ remove_replaced_apps() {
 }
 
 install_flatpaks() {
-  sudo flatpak install -y --noninteractive flathub "${FLATPAKS[@]}"
+  sudo flatpak install -y --noninteractive flathub "${FLATPAKS[@]}" "${FLATPAK_THEMES[@]}"
   # Cursors (and icons) installed for your user live in ~/.local/share/icons, which Flatpaks can't see otherwise.
-  flatpak override --user --filesystem=xdg-data/icons:ro
+  # Noctalia's colors: GTK apps read them from gtk-3.0/gtk-4.0, Qt apps from kdeglobals through the KDE runtime's
+  # platform theme (no runtime ships hyprqt6engine, so without this Qt Flatpaks get Qt's plain look).
+  flatpak override --user --filesystem=xdg-data/icons:ro \
+    --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-config/kdeglobals:ro \
+    --env=QT_QPA_PLATFORMTHEME=kde
 }

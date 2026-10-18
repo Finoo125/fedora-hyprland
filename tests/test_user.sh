@@ -44,6 +44,7 @@ chmod +x "$tmp/fakebin/dbus-run-session" "$tmp/fakebin/gsettings"
 STATE_DIR="$tmp/state"
 ( unset DBUS_SESSION_BUS_ADDRESS; PATH="$tmp/fakebin:$PATH" set_desktop_settings )
 assert_true "first run applies the icon theme"  grep -qF 'gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark' "$log"
+assert_true "GTK apps use the Qt apps' font"   grep -qF 'gsettings set org.gnome.desktop.interface font-name Noto Sans 11' "$log"
 assert_true "outside a session it starts its own bus" grep -qx 'dbus-run-session' "$log"
 : >"$log"
 ( PATH="$tmp/fakebin:$PATH" set_desktop_settings )

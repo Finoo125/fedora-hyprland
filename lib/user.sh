@@ -137,6 +137,9 @@ set_desktop_settings() {
     gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark
     gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
+    gsettings set org.gnome.desktop.interface font-name "Noto Sans 11"
+    gsettings set org.gnome.desktop.interface document-font-name "Noto Sans 11"
+    gsettings set org.gnome.desktop.interface monospace-font-name "JetBrains Mono 11"
     gsettings set org.gnome.desktop.interface cursor-theme Classic-pointer
     gsettings set org.gnome.desktop.interface cursor-size 32'
   [[ -f "$marker" ]] && return 0
@@ -161,6 +164,8 @@ setup_user() {
   done
   write_once "$HOME/.config/hypr/hyprqt6engine.conf" "$(hyprqt6engine_conf "$HOME")"
   write_once "$HOME/.config/hypr/hyprland.lua" "$(hypr_stub "$REPO_DIR")"
+  # Noctalia's btop template only switches the theme in an existing btop.conf; btop fills in the rest itself.
+  write_once "$HOME/.config/btop/btop.conf" 'color_theme = "noctalia"'
   download_wallpapers "$list" "$WALL_DIR"
   noctalia_local_toml "$(default_wallpaper "$list" "$WALL_DIR")" "$WALL_DIR" >"$HOME/.config/noctalia/10-fedora-hyprland-local.toml"
   set_desktop_settings

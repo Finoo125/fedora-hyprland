@@ -140,6 +140,8 @@ The everyday apps are KDE's: Dolphin, Okular (PDFs), Gwenview (images), Kate (te
 KDE Partition Manager (disks) and Discover (apps). Noctalia writes its colors as a KDE color scheme, and
 hyprqt6engine hands it to every Qt/KDE app in Hyprland together with Breeze, Papirus and the desktop's fonts.
 GTK apps (Firefox, Steam, pavucontrol) get the same colors through adw-gtk3 and Noctalia's GTK templates.
+Flatpak apps get them too: GTK ones through adw-gtk3's Flatpak theme, Qt ones through the KDE runtime's theme.
+Firefox needs the [Pywalfox](https://addons.mozilla.org/firefox/addon/pywalfox/) add-on to follow the colors.
 File dialogs are KDE's too, so they match.
 
 **KDE Plasma** is installed as a minimal session (no extra apps, no second login manager) for when Hyprland breaks
@@ -163,7 +165,7 @@ times. Pick **Power saver** when you need the battery to last.
 | Yours (created once, never overwritten) | Regenerated on every install.sh run |
 |---|---|
 | `~/.config/hypr/hyprland.lua` (put overrides at the bottom) | `~/.config/environment.d/60-fedora-hyprland-gpu.conf` (NVIDIA only) |
-| `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/hypr/hyprqt6engine.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
+| `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/btop/btop.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/hypr/hyprqt6engine.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
 | `~/.config/mimeapps.list`, `~/.config/uwsm/env`, `~/.config/xdg-desktop-portal/*-portals.conf` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
 | KDE look (`kdeglobals`, `kcminputrc`, `kwalletrc`), set once | |
 | any other `~/.config/noctalia/*.toml`, and everything you change in Noctalia's Settings | |

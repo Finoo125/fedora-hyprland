@@ -19,7 +19,7 @@ for p in "${wanted[@]}"; do
   if [[ "$p" == *.i686 ]]; then pattern="^${p//./\\.}$"; else pattern="^${p//./\\.}\\."; fi
   grep -qE "$pattern" <<<"$available" || { echo "missing dnf package: $p"; missing=1; }
 done
-for app in "${FLATPAKS[@]}"; do
+for app in "${FLATPAKS[@]}" "${FLATPAK_THEMES[@]}"; do
   flatpak remote-info flathub "$app" >/dev/null 2>&1 || { echo "missing flatpak: $app"; missing=1; }
 done
 exit $missing
