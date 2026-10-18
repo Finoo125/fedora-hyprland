@@ -3,7 +3,7 @@ hl.window_rule({ name = "suppress-maximize-events", match = { class = ".*" }, su
 hl.window_rule({ name = "noctalia-settings", match = { class = "dev.noctalia.Noctalia" }, float = true, size = { 1080, 920 } })
 hl.window_rule({
   name = "small-tools-float",
-  match = { class = "^(org.gnome.Calculator|nm-connection-editor|system-config-printer)$" },
+  match = { class = "^(org.kde.kcalc|nm-connection-editor|system-config-printer)$" },
   float = true,
 })
 hl.layer_rule({

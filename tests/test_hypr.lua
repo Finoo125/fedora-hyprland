@@ -153,6 +153,8 @@ dofile("config/hypr/binds.lua")
 check(calls.binds["SUPER + Return"] ~= nil, "Super+Return is bound")
 check(calls.binds["SUPER + Return"].args == "ghostty +new-window", "Super+Return opens a window in the running Ghostty")
 check(calls.binds["SUPER + code:11"] ~= nil and calls.binds["SUPER + ALT + code:11"] ~= nil, "desk and monitor-focus keys don't collide")
+check(calls.binds["SUPER + E"].args == "uwsm app -- dolphin", "Super+E opens Dolphin")
+check(calls.binds["SUPER + C"].args == "uwsm app -- kcalc", "Super+C opens KCalc")
 
 local loaded = {}
 local real_require = require

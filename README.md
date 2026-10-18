@@ -5,8 +5,9 @@ in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora bas
 
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
 Ayu colors everywhere, Papirus icons, Classic Pointer cursors (light and dark),
-Ghostty and kitty (both in the desktop's colors), Thunar (NAS shares, Android/iPhone, cameras, NTFS/exFAT/Mac drives),
-Firefox, codecs, gaming (Steam, Lutris, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
+Ghostty and kitty (both in the desktop's colors), KDE apps in the desktop's colors (Dolphin with NAS shares,
+Android/iPhone, cameras, NTFS/exFAT/Mac drives; Okular, Gwenview, Kate, Ark, KCalc, Partition Manager, Discover),
+a minimal KDE Plasma session as a fallback, Firefox, codecs, gaming (Steam, Lutris, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
 Podman, Python 3.12–3.14, Node.js LTS), apps as RPMs where one exists (Flathub for the rest), fingerprint login,
 printing with common printer drivers, VPN (OpenVPN, OpenConnect, WireGuard), automatic btrfs snapshots before every
 update plus a monthly scrub, Pika Backup, and one `update` command for everything.
@@ -66,7 +67,7 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Keys | Action |
 |---|---|
 | Super+Return | Ghostty (opens instantly: Ghostty keeps running in the background) |
-| Super+E / W / T / C | Thunar / Firefox / text editor / calculator |
+| Super+E / W / T / C | Dolphin / Firefox / Kate / KCalc |
 | Calculator key | calculator |
 | Ctrl+Shift+Escape | btop |
 
@@ -133,6 +134,24 @@ hl.monitor({ output = "desc:Dell Inc. DELL U2723QE", mode = "preferred", positio
 
 If the portrait monitor shows the picture upside down, override its rotation with `transform = 1` instead of `3`.
 
+## KDE apps and the Plasma fallback
+
+The everyday apps are KDE's: Dolphin, Okular (PDFs), Gwenview (images), Kate (text), Ark (archives), KCalc,
+KDE Partition Manager (disks) and Discover (apps). Noctalia writes its colors as a KDE color scheme, and
+hyprqt6engine hands it to every Qt/KDE app in Hyprland together with Breeze, Papirus and the desktop's fonts.
+GTK apps (Firefox, Steam, pavucontrol) get the same colors through adw-gtk3 and Noctalia's GTK templates.
+File dialogs are KDE's too, so they match.
+
+**KDE Plasma** is installed as a minimal session (no extra apps, no second login manager) for when Hyprland breaks
+after an update. Pick **Plasma** on the login screen instead of Hyprland. It uses the same color scheme, icons and
+cursor, and the same keyring (gnome-keyring; KWallet is turned off), so saved passwords work in both. Leave Plasma's
+Appearance settings alone: they change the same files that give Hyprland its look.
+
+Installs from before this change are moved over once on the next `update`: the old GTK apps (Thunar, Papers, qView,
+GNOME Text Editor, Calculator, Software, Disks, GParted, VLC, File Roller) are removed, and only the changed lines
+of your `mimeapps.list`, `uwsm/env` and `hyprland-portals.conf` are rewritten. If dnf would also remove something
+else, nothing is removed and the installer says what it found.
+
 ## Power profiles
 
 Noctalia's power toggle switches TuneD profiles. **Balanced** runs at full speed on AC and switches to plain
@@ -144,8 +163,9 @@ times. Pick **Power saver** when you need the battery to last.
 | Yours (created once, never overwritten) | Regenerated on every install.sh run |
 |---|---|
 | `~/.config/hypr/hyprland.lua` (put overrides at the bottom) | `~/.config/environment.d/60-fedora-hyprland-gpu.conf` (NVIDIA only) |
-| `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/qt6ct/qt6ct.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
-| `~/.config/mimeapps.list`, `~/.config/uwsm/env` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
+| `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/hypr/hyprqt6engine.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
+| `~/.config/mimeapps.list`, `~/.config/uwsm/env`, `~/.config/xdg-desktop-portal/*-portals.conf` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
+| KDE look (`kdeglobals`, `kcminputrc`, `kwalletrc`), set once | |
 | any other `~/.config/noctalia/*.toml`, and everything you change in Noctalia's Settings | |
 
 The defaults themselves live in this repo (`config/`) and arrive with `update`.
@@ -169,6 +189,8 @@ Older cards get a pointer to RPM Fusion's legacy driver.
   `/boot` isn't part of the snapshots, so choose a kernel that was already installed back then (the older ones in the
   list). The snapshot starts read-only and some services may complain. That's expected. Open Btrfs Assistant, restore
   that snapshot and reboot. **Untested on real hardware so far.**
+- **Hyprland itself is broken:** pick **Plasma** on the login screen, run `update` in Ghostty there, or restore
+  a snapshot with Btrfs Assistant.
 - **Won't boot to the desktop:** pick the previous kernel in the GRUB menu, or switch to a text console with
   Ctrl+Alt+F3, log in, and look at `~/.cache/fedora-hyprland/install.log`.
 

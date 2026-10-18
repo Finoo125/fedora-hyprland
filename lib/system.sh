@@ -193,7 +193,12 @@ setup_system() {
   setup_icons
   setup_power
   sudo systemctl enable --now bluetooth cups avahi-daemon tuned tuned-ppd fwupd-refresh.timer
-  if cpu_is_intel /proc/cpuinfo; then sudo systemctl enable --now thermald; fi
+  if cpu_is_intel /proc/cpuinfo; then
+    sudo systemctl enable --now thermald
+    # Low Power Mode Daemon: keeps light work on the efficient cores of hybrid Intel CPUs (Meteor Lake and newer,
+    # e.g. Panther Lake). It exits on CPUs it doesn't support, which is fine.
+    sudo systemctl enable --now intel_lpmd || warn "intel_lpmd didn't start; this CPU is probably older than Meteor Lake."
+  fi
   # Docker starts on first use instead of at boot, where it made boot wait ~7 s for the network.
   sudo systemctl disable docker.service
   sudo systemctl enable docker.socket

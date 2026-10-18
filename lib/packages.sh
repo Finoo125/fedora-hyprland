@@ -15,19 +15,19 @@ gpgkey=https://packages.microsoft.com/keys/microsoft.asc'
 DNF_BASE=(dnf5-plugins flatpak pciutils jq)
 DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-desktop-portal-gtk noctalia greetd noctalia-greeter
   pipewire pipewire-pulseaudio wireplumber bluez NetworkManager-wifi nm-connection-editor tuned-ppd upower
-  gnome-keyring gnome-keyring-pam gcr dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland qt6ct nwg-look adw-gtk3-theme papirus-icon-theme
+  gnome-keyring gnome-keyring-pam gcr dconf ddcutil bolt polkit qt5-qtwayland qt6-qtwayland hyprqt6engine plasma-breeze-qt6 nwg-look adw-gtk3-theme papirus-icon-theme
   xsettingsd google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
-DNF_APPS=(ghostty kitty Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer
-  file-roller firefox mpv mpv-mpris qview papers gnome-text-editor gnome-calculator gnome-software kde-connect
-  pavucontrol gnome-disk-utility thunderbird vlc telegram-desktop discord flatseal
+# KDE apps: they read Noctalia's KDE color scheme (kdeglobals), so they match the desktop in Hyprland and in Plasma.
+DNF_APPS=(ghostty kitty dolphin ark okular gwenview kate kcalc kde-partitionmanager plasma-discover plasma-discover-flatpak
+  ffmpegthumbs kdegraphics-thumbnailers firefox mpv mpv-mpris kde-connect
+  pavucontrol thunderbird telegram-desktop discord flatseal
   signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center)
-# GParted requires a polkit agent package; Noctalia is the agent but its RPM doesn't say so, and dnf would
-# pull in all of GNOME Shell instead. xfce-polkit (42 KB) satisfies it and only autostarts on XFCE.
-# Drives, network shares and devices in Thunar. gvfs-fuse gives smb://, mtp:// etc. a real path under
-# /run/user/$UID/gvfs so non-GTK apps (qView, mpv, ...) can open files there too.
-DNF_STORAGE=(gparted xfce-polkit gvfs gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive
+# Drives, network shares and devices in Dolphin: kio-extras (smb, nfs, sftp, mtp, afc for iPhones), kamera (cameras).
+# kio-fuse gives smb://, mtp:// etc. a real path so non-KDE apps (mpv, ...) can open files there too.
+# gvfs stays for the GTK apps (trash, recent files).
+DNF_STORAGE=(kio-extras kio-fuse kamera gvfs
   udisks2 udisks2-btrfs ntfs-3g exfatprogs dosfstools udftools hfsplus-tools btrfs-progs xfsprogs
   cifs-utils nfs-utils samba-client fuse-sshfs libimobiledevice-utils ifuse unrar)
 DNF_CLI=(git gh wget2-wget curl fastfetch btop bat eza fzf ripgrep fd-find zoxide unzip 7zip bash-completion plocate rsync ImageMagick)
@@ -37,12 +37,20 @@ DNF_AMD=(mesa-va-drivers-freeworld)
 DNF_GAMING=(steam gamemode mangohud gamescope lutris protontricks winetricks vulkan-tools)
 DNF_SYSTEM=(fuse-libs cups cups-pk-helper cups-pdf hplip gutenprint-cups foomatic-db system-config-printer avahi nss-mdns
   NetworkManager-openvpn-gnome NetworkManager-openconnect-gnome wireguard-tools fprintd fprintd-pam
-  snapper btrfs-assistant btrfsmaintenance smartmontools libdnf5-plugin-actions fwupd thermald inotify-tools)
+  snapper btrfs-assistant btrfsmaintenance smartmontools libdnf5-plugin-actions fwupd thermald intel-lpmd inotify-tools)
 DNF_DEV=(gcc make uv python3 python3.12 python3.13 nodejs24 nodejs24-npm podman distrobox code
   docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 DNF_NVIDIA=(akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-libs.i686 xorg-x11-drv-nvidia-power
   libva-nvidia-driver switcheroo-control)
 DNF_SECUREBOOT=(kmodtool akmods mokutil openssl)
+# Minimal KDE Plasma, a fallback session on the login screen for when Hyprland breaks. Installed without weak
+# dependencies, so no Plasma Login Manager, KWallet or kde-gtk-config (which rewrites the GTK settings).
+DNF_PLASMA=(plasma-workspace plasma-desktop kwin plasma-systemsettings kscreen plasma-nm plasma-pa powerdevil bluedevil
+  polkit-kde xdg-desktop-portal-kde)
+# Replaced by the KDE apps above; removed once when an older install is migrated (see remove_replaced_apps).
+REPLACED_PACKAGES=(Thunar thunar-archive-plugin thunar-volman tumbler ffmpegthumbnailer file-roller qview papers
+  gnome-text-editor gnome-calculator gnome-software gnome-software-fedora-langpacks gnome-disk-utility gparted xfce-polkit
+  vlc qt6ct gvfs-fuse gvfs-smb gvfs-nfs gvfs-mtp gvfs-afc gvfs-gphoto2 gvfs-archive)
 # Only apps without an RPM in Fedora, RPM Fusion or Terra; everything else comes from dnf.
 FLATPAKS=(com.rtosta.zapzap com.bitwarden.desktop md.obsidian.Obsidian io.dbeaver.DBeaverCommunity
   org.localsend.localsend_app it.mijorus.gearlever org.gnome.World.PikaBackup)
@@ -50,7 +58,8 @@ FLATPAKS=(com.rtosta.zapzap com.bitwarden.desktop md.obsidian.Obsidian io.dbeave
 # all_dnf_packages -> every dnf package the installer may install, one per line (CI checks they exist).
 all_dnf_packages() {
   printf '%s\n' "${DNF_BASE[@]}" "${DNF_DESKTOP[@]}" "${DNF_APPS[@]}" "${DNF_STORAGE[@]}" "${DNF_CLI[@]}" "${DNF_MEDIA[@]}" \
-    "${DNF_GAMING[@]}" "${DNF_SYSTEM[@]}" "${DNF_DEV[@]}" "${DNF_NVIDIA[@]}" "${DNF_SECUREBOOT[@]}" "${DNF_AMD[@]}" ffmpeg
+    "${DNF_GAMING[@]}" "${DNF_SYSTEM[@]}" "${DNF_DEV[@]}" "${DNF_NVIDIA[@]}" "${DNF_SECUREBOOT[@]}" "${DNF_AMD[@]}" \
+    "${DNF_PLASMA[@]}" ffmpeg
 }
 
 # main_dnf_packages -> the packages install_packages installs in one dnf transaction, one per line.
@@ -60,13 +69,24 @@ main_dnf_packages() {
 }
 
 # Other desktops' shells, sessions and login managers. A dependency that drags one in (as GParted once did
-# with GNOME Shell) installs hundreds of MB the Hyprland setup never uses.
-FOREIGN_DESKTOP=(gnome-shell gnome-session mutter gdm kwin plasma-workspace sddm cinnamon xfce4-session
+# with GNOME Shell) installs hundreds of MB the Hyprland setup never uses. Plasma comes only from DNF_PLASMA.
+FOREIGN_DESKTOP=(gnome-shell gnome-session mutter gdm kwin plasma-workspace sddm plasma-login-manager cinnamon
+  xfce4-session mate-session-manager lightdm)
+# The Plasma fallback may bring KDE's own pieces, but never a second login manager or another desktop.
+FOREIGN_TO_PLASMA=(gnome-shell gnome-session mutter gdm sddm plasma-login-manager cinnamon xfce4-session
   mate-session-manager lightdm)
 
-# foreign_desktop_packages: stdin = `dnf install --assumeno` output -> the FOREIGN_DESKTOP packages it would install.
+# foreign_desktop_packages [NAME...]: stdin = `dnf install --assumeno` output -> the packages it would install
+# that are in NAME... (default: FOREIGN_DESKTOP).
 foreign_desktop_packages() {
-  awk 'NF >= 5 {print $1}' | grep -xF -f <(printf '%s\n' "${FOREIGN_DESKTOP[@]}") || true
+  local -a names=("$@")
+  ((${#names[@]})) || names=("${FOREIGN_DESKTOP[@]}")
+  awk 'NF >= 5 {print $1}' | grep -xF -f <(printf '%s\n' "${names[@]}") || true
+}
+
+# removal_names: stdin = `dnf remove --assumeno` output -> the packages it would remove, one per line.
+removal_names() {
+  awk '/^Removing/ {on = 1; next} /^[A-Z]/ {on = 0} on && NF >= 5 {print $1}'
 }
 
 # has_amd_gpu LINES -> 0 when LINES (`lspci -d ::03xx`) contain an AMD/ATI GPU.
@@ -116,6 +136,28 @@ install_packages() {
   fi
   # Minimal Install leaves out the firmware for Wi-Fi, Bluetooth and audio chips (e.g. Intel iwlwifi).
   sudo dnf group install -y hardware-support
+  sudo dnf install -y --setopt=install_weak_deps=False "${DNF_PLASMA[@]}"
+  remove_replaced_apps
+}
+
+# remove_replaced_apps: once per machine, removes the GTK apps an older install had where a KDE app took over.
+# Skipped (with a warning) if dnf would also remove anything else, so nothing you added yourself disappears.
+remove_replaced_apps() {
+  local marker="$STATE_DIR/replaced-apps-removed" transaction extra
+  local -a installed=()
+  [[ -f "$marker" ]] && return 0
+  mapfile -t installed < <(rpm -q --qf '%{NAME}\n' "${REPLACED_PACKAGES[@]}" 2>/dev/null | grep -v ' ')
+  if ((${#installed[@]})); then
+    transaction=$(LC_ALL=C sudo dnf remove --assumeno --noautoremove "${installed[@]}" 2>&1 || true)
+    extra=$(removal_names <<<"$transaction" | grep -vxF -f <(printf '%s\n' "${installed[@]}") || true)
+    if [[ -n "$extra" ]]; then
+      warn "Not removing the replaced apps: dnf would also remove $(tr '\n' ' ' <<<"$extra")"
+      return 0
+    fi
+    sudo dnf remove -y --noautoremove "${installed[@]}"
+  fi
+  mkdir -p "$STATE_DIR"
+  : >"$marker"
 }
 
 install_flatpaks() {

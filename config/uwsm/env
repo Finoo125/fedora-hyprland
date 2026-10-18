@@ -2,6 +2,9 @@
 export XCURSOR_THEME=Classic-pointer
 export XCURSOR_SIZE=32
 export HYPRCURSOR_SIZE=32
-export QT_QPA_PLATFORMTHEME=qt6ct
+# Qt and KDE apps take Noctalia's KDE color scheme, Breeze and Papirus from ~/.config/hypr/hyprqt6engine.conf.
+export QT_QPA_PLATFORMTHEME=hyprqt6engine
+# KDE apps find the app menu (Dolphin's "Open with") in Plasma's menu file, outside Plasma too.
+export XDG_MENU_PREFIX=plasma-
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 export TERMINAL=ghostty

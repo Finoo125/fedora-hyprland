@@ -7,7 +7,9 @@ builtin = "Ayu"
 
 [theme.templates]
 enable_builtin_templates = true
-builtin_ids = ["gtk3", "gtk4", "qt", "ghostty", "kitty", "btop", "hyprland", "firefox"]   # Firefox also needs the Pywalfox extension
+# kcolorscheme: ~/.local/share/color-schemes/noctalia.colors for Dolphin and every KDE/Qt app (via hyprqt6engine),
+# merged into kdeglobals so the Plasma fallback has the same colors. It replaces the plain Qt (qt6ct) template.
+builtin_ids = ["gtk3", "gtk4", "kcolorscheme", "ghostty", "kitty", "btop", "hyprland", "firefox"]   # Firefox also needs the Pywalfox extension
 
 [shell]
 polkit_agent = true   # password prompts for Btrfs Assistant, GNOME Software and other admin actions

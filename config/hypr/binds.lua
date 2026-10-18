@@ -36,11 +36,11 @@ hl.bind(mod .. " + Plus", function() zoom(0.3) end, { repeating = true })
 -- Apps
 -- Ghostty runs as a background service (D-Bus activated), so new windows open instantly instead of in ~1 s.
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("ghostty +new-window"))
-hl.bind(mod .. " + E", run("thunar"))
+hl.bind(mod .. " + E", run("dolphin"))
 hl.bind(mod .. " + W", run("firefox"))
-hl.bind(mod .. " + T", run("gnome-text-editor --new-window"))
-hl.bind(mod .. " + C", run("gnome-calculator"))
-hl.bind("XF86Calculator", run("gnome-calculator"))
+hl.bind(mod .. " + T", run("kate --new"))
+hl.bind(mod .. " + C", run("kcalc"))
+hl.bind("XF86Calculator", run("kcalc"))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd("ghostty +new-window -e btop"))
 
 -- Noctalia
