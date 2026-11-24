@@ -25,7 +25,7 @@ assert_true  "the login unlocks the keyring"   grep -qx gnome-keyring-pam <<<"$a
 assert_true  "NAS files open in non-KDE apps"  grep -qx kio-fuse <<<"$all"
 assert_true  "btrfs gets scrubbed"             grep -qx btrfsmaintenance <<<"$all"
 
-for pkg in signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center; do
+for pkg in signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center umbriel-nightly xdg-desktop-portal-umbriel-nightly; do
   assert_true "Terra allows $pkg" grep -q "\b$pkg\*" <<<"$TERRA_ALLOW"
 done
 assert_false "Signal comes from Terra, not Flathub" grep -qx org.signal.Signal < <(printf '%s\n' "${FLATPAKS[@]}")

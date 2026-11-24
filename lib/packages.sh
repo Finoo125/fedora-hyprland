@@ -2,7 +2,7 @@
 # Package sources and package lists. Every function here is safe to run again.
 
 COPR_REPO="lionheartp/Hyprland"
-TERRA_ALLOW="noctalia-greeter*,ghostty*,signal-desktop*,heroic-games-launcher*,protonplus*,faugus-launcher*,mission-center*"
+TERRA_ALLOW="noctalia-greeter*,ghostty*,signal-desktop*,heroic-games-launcher*,protonplus*,faugus-launcher*,mission-center*,umbriel-nightly*,xdg-desktop-portal-umbriel-nightly*"
 VSCODE_REPO='[code]
 name=Visual Studio Code
 baseurl=https://packages.microsoft.com/yumrepos/vscode
@@ -111,8 +111,8 @@ setup_repos() {
     # shellcheck disable=SC2016 # $releasever is expanded by dnf, not by the shell
     sudo dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
   fi
-  # Terra only provides the greeter, Ghostty and apps Fedora and RPM Fusion don't package;
-  # nothing else from it may replace Fedora packages.
+  # Terra only provides the greeter, Ghostty, Umbriel (nightly, tried next to Hyprland) and apps Fedora and
+  # RPM Fusion don't package; nothing else from it may replace Fedora packages.
   sudo dnf config-manager setopt "terra.includepkgs=$TERRA_ALLOW"
   for repo in $(dnf repo list --all | terra_extra_repos); do
     sudo dnf config-manager setopt "$repo.enabled=0"
