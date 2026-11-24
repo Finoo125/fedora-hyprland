@@ -44,7 +44,8 @@ assert_eq $'gnome-shell\ngdm' "$(foreign_desktop_packages <<<"$transaction")" "a
 assert_eq "" "$(grep -v 'gdm ' <<<"$transaction" | grep -v ' gnome-shell  ' | foreign_desktop_packages)" "gnome-shell-common alone is no desktop"
 assert_eq "" "$(grep -vE 'gnome-shell |gdm ' <<<"$transaction" | foreign_desktop_packages)" "a clean transaction passes"
 main=$(main_dnf_packages)
-assert_true  "Dolphin is the file manager"                  grep -qx dolphin <<<"$main"
+assert_true  "Luciole is the file manager"                  grep -qx luciole-git <<<"$main"
+assert_true  "Dolphin stays for Plasma and NAS shares"      grep -qx dolphin <<<"$main"
 assert_true  "KDE Partition Manager does the disks"         grep -qx kde-partitionmanager <<<"$main"
 for pkg in Thunar gparted xfce-polkit gnome-disk-utility gnome-software papers qview vlc qt6ct file-roller; do
   assert_false "$pkg is replaced, not installed next to its KDE app" grep -qx "$pkg" <<<"$main"
@@ -88,7 +89,7 @@ assert_false "NVIDIA is not AMD"                    has_amd_gpu "$nvidia"
 portals=config/xdg-desktop-portal/hyprland-portals.conf
 assert_true "portals keep Fedora's hyprland;gtk default" grep -qx 'default=hyprland;gtk' "$portals"
 assert_true "secrets go to gnome-keyring" grep -qx 'org.freedesktop.impl.portal.Secret=gnome-keyring' "$portals"
-assert_true "file dialogs are KDE's" grep -qx 'org.freedesktop.impl.portal.FileChooser=kde' "$portals"
+assert_true "file dialogs are Luciole's, GTK's as fallback" grep -qx 'org.freedesktop.impl.portal.FileChooser=luciole;gtk' "$portals"
 assert_true "Plasma keeps passwords in gnome-keyring too" \
   grep -qx 'org.freedesktop.impl.portal.Secret=gnome-keyring' config/xdg-desktop-portal/kde-portals.conf
 assert_true "gnome-keyring ships that portal" grep -qx gnome-keyring <<<"$(printf '%s\n' "${DNF_DESKTOP[@]}")"

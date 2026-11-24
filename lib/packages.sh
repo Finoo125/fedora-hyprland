@@ -19,8 +19,10 @@ DNF_DESKTOP=(hyprland hyprland-guiutils uwsm xdg-desktop-portal-hyprland xdg-des
   google-noto-sans-fonts google-noto-color-emoji-fonts jetbrains-mono-fonts-all
   google-noto-sans-cjk-fonts liberation-fonts-all wl-clipboard grim slurp hyprpicker gpu-screen-recorder udiskie
   xdg-user-dirs xdg-utils xdg-terminal-exec libnotify playerctl brightnessctl)
+# Luciole (Noctalia's file manager, from the COPR) is the file manager; it follows Noctalia's colors.
 # KDE apps: they read Noctalia's KDE color scheme (kdeglobals), so they match the desktop in Hyprland and in Plasma.
-DNF_APPS=(ghostty kitty dolphin ark okular gwenview kate kcalc kde-partitionmanager plasma-discover plasma-discover-flatpak
+# Dolphin stays for the Plasma session and NAS shares (KIO).
+DNF_APPS=(ghostty kitty luciole-git dolphin ark okular gwenview kate kcalc kde-partitionmanager plasma-discover plasma-discover-flatpak
   ffmpegthumbs kdegraphics-thumbnailers firefox mpv mpv-mpris kde-connect
   pavucontrol thunderbird telegram-desktop discord flatseal
   signal-desktop heroic-games-launcher protonplus faugus-launcher mission-center)

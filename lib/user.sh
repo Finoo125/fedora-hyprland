@@ -112,6 +112,19 @@ migrate_kde_apps() {
   : >"$marker"
 }
 
+# migrate_luciole CONFIG_DIR: once, makes Luciole the file manager of an install from the Dolphin days: folders open
+# in it and file dialogs come from it. Only those two lines change; a file manager you picked yourself stays.
+migrate_luciole() {
+  local marker="$STATE_DIR/luciole-migrated" portals="$1/xdg-desktop-portal/hyprland-portals.conf"
+  [[ -f "$marker" ]] && return 0
+  [[ -f "$1/mimeapps.list" ]] &&
+    sed -i 's/^inode\/directory=org\.kde\.dolphin\.desktop$/inode\/directory=dev.noctalia.luciole.desktop/' "$1/mimeapps.list"
+  [[ -f "$portals" ]] &&
+    sed -i 's/^org\.freedesktop\.impl\.portal\.FileChooser=kde$/org.freedesktop.impl.portal.FileChooser=luciole;gtk/' "$portals"
+  mkdir -p "$STATE_DIR"
+  : >"$marker"
+}
+
 wallpaper_urls() { grep -vE '^[[:space:]]*(#|$)' "$1"; }
 default_wallpaper() { echo "$2/$(basename "$(wallpaper_urls "$1" | head -1)")"; }
 
@@ -158,6 +171,7 @@ setup_user() {
   mkdir -p "$HOME/.config/noctalia"
   ln -sfn "$REPO_DIR/config/noctalia/00-fedora-hyprland.toml" "$HOME/.config/noctalia/00-fedora-hyprland.toml"
   migrate_kde_apps "$HOME/.config"
+  migrate_luciole "$HOME/.config"
   for item in ghostty/config kitty/kitty.conf uwsm/env gtk-3.0/settings.ini gtk-4.0/settings.ini mimeapps.list \
     xdg-desktop-portal/hyprland-portals.conf xdg-desktop-portal/kde-portals.conf; do
     copy_once "$REPO_DIR/config/$item" "$HOME/.config/$item"

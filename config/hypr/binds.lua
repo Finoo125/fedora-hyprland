@@ -36,7 +36,7 @@ hl.bind(mod .. " + Plus", function() zoom(0.3) end, { repeating = true })
 -- Apps
 -- Ghostty runs as a background service (D-Bus activated), so new windows open instantly instead of in ~1 s.
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("ghostty +new-window"))
-hl.bind(mod .. " + E", run("dolphin"))
+hl.bind(mod .. " + E", run("luciole"))
 hl.bind(mod .. " + W", run("firefox"))
 hl.bind(mod .. " + T", run("kate --new"))
 hl.bind(mod .. " + C", run("kcalc"))

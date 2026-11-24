@@ -5,7 +5,8 @@ in the spirit of CachyOS's Hyprland/Noctalia edition, but on a stable Fedora bas
 
 You get Hyprland with Noctalia (bar, launcher, notifications, lock screen, wallpapers), the Noctalia login screen,
 Ayu colors everywhere, Papirus icons, Classic Pointer cursors (light and dark),
-Ghostty and kitty (both in the desktop's colors), KDE apps in the desktop's colors (Dolphin with NAS shares,
+Ghostty and kitty (both in the desktop's colors), Luciole (Noctalia's file manager, also its file dialogs),
+KDE apps in the desktop's colors (Dolphin with NAS shares,
 Android/iPhone, cameras, NTFS/exFAT/Mac drives; Okular, Gwenview, Kate, Ark, KCalc, Partition Manager, Discover),
 a minimal KDE Plasma session as a fallback, Firefox, codecs, gaming (Steam, Lutris, ProtonPlus, Heroic), dev tools (VS Code, JetBrains Toolbox, GitHub CLI, Docker,
 Podman, Python 3.12–3.14, Node.js LTS), apps as RPMs where one exists (Flathub for the rest), fingerprint login,
@@ -67,7 +68,7 @@ The CachyOS `cachyos-hypr-noctalia` set. Super is the Windows key.
 | Keys | Action |
 |---|---|
 | Super+Return | Ghostty (opens instantly: Ghostty keeps running in the background) |
-| Super+E / W / T / C | Dolphin / Firefox / Kate / KCalc |
+| Super+E / W / T / C | Luciole / Firefox / Kate / KCalc |
 | Calculator key | calculator |
 | Ctrl+Shift+Escape | btop |
 
@@ -136,7 +137,10 @@ If the portrait monitor shows the picture upside down, override its rotation wit
 
 ## KDE apps and the Plasma fallback
 
-The everyday apps are KDE's: Dolphin, Okular (PDFs), Gwenview (images), Kate (text), Ark (archives), KCalc,
+The file manager is Luciole, Noctalia's own: folders open in it, file dialogs come from it, and it takes
+Noctalia's colors directly. Dolphin stays for the Plasma session and for NAS shares and phones (KIO).
+
+The other everyday apps are KDE's: Okular (PDFs), Gwenview (images), Kate (text), Ark (archives), KCalc,
 KDE Partition Manager (disks) and Discover (apps). Noctalia writes its colors as a KDE color scheme, and
 hyprqt6engine hands it to every Qt/KDE app in Hyprland together with Breeze, Papirus and the desktop's fonts.
 GTK apps (Firefox, Steam, pavucontrol) get the same colors through adw-gtk3 and Noctalia's GTK templates.

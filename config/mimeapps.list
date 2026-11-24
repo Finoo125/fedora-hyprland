@@ -1,5 +1,5 @@
 [Default Applications]
-inode/directory=org.kde.dolphin.desktop
+inode/directory=dev.noctalia.luciole.desktop
 application/pdf=okularApplication_pdf.desktop
 image/png=org.kde.gwenview.desktop
 image/jpeg=org.kde.gwenview.desktop

@@ -88,4 +88,16 @@ printf 'inode/directory=thunar.desktop\n' >"$old/mimeapps.list"
 migrate_kde_apps "$old"
 assert_true "the migration runs only once, so a later choice of Thunar stays" grep -qx 'inode/directory=thunar.desktop' "$old/mimeapps.list"
 assert_eq "" "$(grep -E 'thunar|gnome|qView' config/mimeapps.list)" "new installs get only KDE apps as defaults"
+assert_true "new installs open folders in Luciole" grep -qx 'inode/directory=dev.noctalia.luciole.desktop' config/mimeapps.list
+
+# An install from the Dolphin days moves to Luciole once.
+printf 'inode/directory=org.kde.dolphin.desktop\napplication/pdf=okularApplication_pdf.desktop\n' >"$old/mimeapps.list"
+STATE_DIR="$tmp/state-luciole"
+migrate_luciole "$old"
+assert_true "folders open in Luciole" grep -qx 'inode/directory=dev.noctalia.luciole.desktop' "$old/mimeapps.list"
+assert_true "other defaults stay" grep -qx 'application/pdf=okularApplication_pdf.desktop' "$old/mimeapps.list"
+assert_true "file dialogs become Luciole's" grep -qx 'org.freedesktop.impl.portal.FileChooser=luciole;gtk' "$old/xdg-desktop-portal/hyprland-portals.conf"
+printf 'inode/directory=org.kde.dolphin.desktop\n' >"$old/mimeapps.list"
+migrate_luciole "$old"
+assert_true "runs only once, so a later choice of Dolphin stays" grep -qx 'inode/directory=org.kde.dolphin.desktop' "$old/mimeapps.list"
 finish
