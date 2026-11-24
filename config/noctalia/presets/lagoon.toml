@@ -1,0 +1,56 @@
+# Preset "lagoon": tropical islands and turquoise lagoon from above. Waterfall style (faithful, capsule bar, glass).
+# wallpaper = ~/Pictures/Wallpapers/wallhaven-gp3ro3.jpg
+[theme]
+source           = "wallpaper"
+wallpaper_scheme = "faithful"
+terminal_colors  = "standard"
+
+[bar.default]
+concave_edge_corners = true
+radius               = 14
+background_opacity   = 0.85
+compositor_blur      = true
+capsule              = true
+capsule_fill         = "surface_container"
+
+[shell.panel]
+transparency_mode = "glass"
+
+[desktop_widgets]
+enabled = true
+# Time in a card at the top middle; on the right (48 px from the edge, 362 px wide, 16 px apart)
+# the month and below it the music player while something plays.
+widget_order = ["wf_time", "wf_cal", "wf_media"]
+
+[desktop_widgets.widget.wf_time]
+type = "clock"
+cx = 960.0
+cy = 111.0
+box_width = 362.0
+box_height = 110.0
+[desktop_widgets.widget.wf_time.settings]
+format = "{:%H:%M}"
+center_text = true
+background_opacity = 0.75
+shadow = false
+
+[desktop_widgets.widget.wf_cal]
+type = "calendar"
+cx = 1691.0
+cy = 260.0
+[desktop_widgets.widget.wf_cal.settings]
+show_events = false
+background_opacity = 0.75
+
+[desktop_widgets.widget.wf_media]
+type = "media_player"
+cx = 1691.0
+cy = 540.0
+box_width = 362.0
+box_height = 120.0
+[desktop_widgets.widget.wf_media.settings]
+hide_when_no_media = true
+album_art_background = true
+audio_visualizer = true
+background_opacity = 0.75
+shadow = false

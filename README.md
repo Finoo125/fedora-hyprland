@@ -158,6 +158,29 @@ GNOME Text Editor, Calculator, Software, Disks, GParted, VLC, File Roller) are r
 of your `mimeapps.list`, `uwsm/env` and `hyprland-portals.conf` are rewritten. If dnf would also remove something
 else, nothing is removed and the installer says what it found.
 
+## Looks
+
+`noctalia-preset` switches the whole look in one go: palette, bar, panels, desktop widgets and wallpaper. The colors
+come from the wallpaper, so the apps (Ghostty, kitty, GTK, KDE, Luciole, Firefox) change with it.
+
+```bash
+noctalia-preset            # list the looks; * marks the active one
+noctalia-preset waterfall  # use one
+noctalia-preset off        # back to Ayu and the wallpaper you had before
+```
+
+| Look | Wallpaper | Style |
+|---|---|---|
+| `waterfall` | forest gorge with a turquoise lake | teal, capsule bar, see-through panels; time at the top, calendar and music on the right |
+| `island`, `lagoon`, `seaside`, `coast` | island, tropical lagoon, village street to the sea, coastal town | the waterfall style with other blue wallpapers |
+| `dusk` | golden field at sunset | warm, floating bar, soft panels |
+| `night` | the same field at night | deep blue, no bar background (only the capsules), see-through panels |
+
+A look is a Noctalia config file in `config/noctalia/presets` with a `# wallpaper = PATH` line; the active one is
+linked as `~/.config/noctalia/30-preset.toml`, so it updates with `update`. Your own go in `~/.config/noctalia-presets`
+and win over a repo look of the same name. The widget positions are made for a 1920x1080 screen; move them with
+Settings → Desktop → Toggle Editor (they are then saved in Noctalia's settings).
+
 ## Power profiles
 
 Noctalia's power toggle switches TuneD profiles. **Balanced** runs at full speed on AC and switches to plain
@@ -172,7 +195,7 @@ times. Pick **Power saver** when you need the battery to last.
 | `~/.config/ghostty/config`, `~/.config/kitty/kitty.conf`, `~/.config/btop/btop.conf`, `~/.config/gtk-*/settings.ini`, `~/.config/hypr/hyprqt6engine.conf` | `~/.config/noctalia/10-fedora-hyprland-local.toml` |
 | `~/.config/mimeapps.list`, `~/.config/uwsm/env`, `~/.config/xdg-desktop-portal/*-portals.conf` | `/etc/greetd/config.toml`, `/var/lib/noctalia-greeter/greeter.toml` |
 | KDE look (`kdeglobals`, `kcminputrc`, `kwalletrc`), set once | |
-| any other `~/.config/noctalia/*.toml`, and everything you change in Noctalia's Settings | |
+| any other `~/.config/noctalia/*.toml` (`30-preset.toml` is the active look), `~/.config/noctalia-presets`, and everything you change in Noctalia's Settings | |
 
 The defaults themselves live in this repo (`config/`) and arrive with `update`.
 

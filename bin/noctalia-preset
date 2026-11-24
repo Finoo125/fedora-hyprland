@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Switches Noctalia looks: a preset is a Noctalia config file that names its wallpaper on a "# wallpaper = PATH" line.
+# Presets come from this repo (config/noctalia/presets) and from ~/.config/noctalia-presets, where yours win by name.
+#   noctalia-preset          list the presets (* = active)
+#   noctalia-preset NAME     use NAME: its config and its wallpaper
+#   noctalia-preset off      back to the plain setup and the wallpaper from before the first preset
+set -euo pipefail
+repo_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+dirs=("$repo_dir/config/noctalia/presets" "${XDG_CONFIG_HOME:-$HOME/.config}/noctalia-presets")
+active="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/30-preset.toml"
+previous="${XDG_STATE_HOME:-$HOME/.local/state}/fedora-hyprland/preset-previous-wallpaper"
+
+# preset_file NAME -> the file for NAME, the user's own first.
+preset_file() {
+  local i
+  for ((i = ${#dirs[@]} - 1; i >= 0; i--)); do
+    [[ -f "${dirs[i]}/$1.toml" ]] && { echo "${dirs[i]}/$1.toml"; return 0; }
+  done
+  return 1
+}
+
+list() {
+  local f name current mark
+  current=$(readlink "$active" 2>/dev/null || true)
+  for name in $(for d in "${dirs[@]}"; do [[ -d "$d" ]] && ls "$d"; done | sed -n 's/\.toml$//p' | sort -u); do
+    f=$(preset_file "$name"); mark=" "
+    [[ "$f" == "$current" ]] && mark="*"
+    printf '%s %-10s %s\n' "$mark" "$name" "$(sed -n '1s/^# Preset "[^"]*": //p' "$f")"
+  done
+}
+
+case "${1:-}" in
+  "") list ;;
+  off)
+    rm -f "$active"
+    if [[ -f "$previous" ]]; then
+      noctalia msg wallpaper-set "$(cat "$previous")" >/dev/null
+      rm -f "$previous"
+    fi
+    echo "preset off" ;;
+  *)
+    f=$(preset_file "$1") || { echo "No preset '$1'. Presets:" >&2; list >&2; exit 1; }
+    if [[ ! -L "$active" ]]; then
+      mkdir -p "$(dirname "$previous")"
+      noctalia msg wallpaper-get >"$previous"
+    fi
+    mkdir -p "$(dirname "$active")"
+    ln -sfn "$f" "$active"
+    wallpaper=$(sed -n 's/^# wallpaper = //p' "$f" | head -1)
+    [[ -n "$wallpaper" ]] && noctalia msg wallpaper-set "${wallpaper/#\~/$HOME}" >/dev/null
+    echo "preset $1 active" ;;
+esac

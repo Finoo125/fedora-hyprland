@@ -19,3 +19,18 @@ https://raw.githubusercontent.com/vyrx-dev/Wallpapers/53e29b35fc242370e13f7dc141
 https://raw.githubusercontent.com/JaKooLit/Wallpaper-Bank/c5e1780c29adca428dc4ca2d970bd1a6a09f18f3/wallpapers/Comets-of-that-night.jpg
 # Horizon sunset (JaKooLit/Wallpaper-Bank)
 https://raw.githubusercontent.com/JaKooLit/Wallpaper-Bank/c5e1780c29adca428dc4ca2d970bd1a6a09f18f3/wallpapers/Sun-Setting-Horizon.png
+# For the looks in config/noctalia/presets (wallhaven.cc; a file there never changes under its id).
+# Waterfall gorge (preset waterfall)
+https://w.wallhaven.cc/full/rq/wallhaven-rq6j57.png
+# Dusk field (preset dusk)
+https://w.wallhaven.cc/full/gw/wallhaven-gw1qwq.png
+# Night field (preset night)
+https://w.wallhaven.cc/full/og/wallhaven-og71gl.png
+# Island gazebo (preset island)
+https://w.wallhaven.cc/full/85/wallhaven-85mk1k.jpg
+# Lagoon (preset lagoon)
+https://w.wallhaven.cc/full/gp/wallhaven-gp3ro3.jpg
+# Seaside street (preset seaside)
+https://w.wallhaven.cc/full/zy/wallhaven-zypy2w.jpg
+# Coastal town (preset coast)
+https://w.wallhaven.cc/full/d5/wallhaven-d5ryjo.jpg

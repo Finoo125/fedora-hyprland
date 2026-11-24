@@ -193,4 +193,5 @@ setup_user() {
   ln -sfn "$HOME/.mozilla/native-messaging-hosts/pywalfox.json" "$HOME/.config/mozilla/native-messaging-hosts/pywalfox.json"
   mkdir -p "$HOME/.local/bin"
   ln -sfn "$REPO_DIR/bin/update" "$HOME/.local/bin/update"
+  ln -sfn "$REPO_DIR/bin/noctalia-preset" "$HOME/.local/bin/noctalia-preset"
 }

@@ -1,0 +1,42 @@
+# Preset "dusk": golden field at sunset. vibrant palette, floating rounded bar, soft panels.
+# wallpaper = ~/Pictures/Wallpapers/wallhaven-gw1qwq.png
+[theme]
+source           = "wallpaper"
+wallpaper_scheme = "vibrant"
+terminal_colors  = "standard"
+
+[bar.default]
+margin_edge          = 8        # float away from the top edge
+margin_ends          = 8
+concave_edge_corners = false
+radius               = 16
+radius_top_left      = 16
+radius_top_right     = 16
+background_opacity   = 0.80
+compositor_blur      = true
+capsule              = true
+capsule_fill         = "surface_container_high"
+
+[shell.panel]
+transparency_mode = "soft"
+
+[desktop_widgets]
+enabled = true
+widget_order = ["dk_clock", "dk_sys", "dk_media"]
+
+[desktop_widgets.widget.dk_clock]
+type = "clock"
+cx = 260.0
+cy = 820.0
+[desktop_widgets.widget.dk_clock.settings]
+format = "{:%H:%M}"
+
+[desktop_widgets.widget.dk_sys]
+type = "sysmon"
+cx = 560.0
+cy = 820.0
+
+[desktop_widgets.widget.dk_media]
+type = "media_player"
+cx = 1620.0
+cy = 860.0

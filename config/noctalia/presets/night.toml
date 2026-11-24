@@ -1,0 +1,41 @@
+# Preset "night": blue field under the stars. tonal palette, transparent bar with floating capsules, glass panels.
+# wallpaper = ~/Pictures/Wallpapers/wallhaven-og71gl.png
+[theme]
+source           = "wallpaper"
+wallpaper_scheme = "m3-tonal-spot"
+terminal_colors  = "standard"
+
+[bar.default]
+background_opacity   = 0.0      # no bar, only the capsules float over the sky
+compositor_blur      = false
+shadow               = false
+concave_edge_corners = false
+capsule              = true
+capsule_fill         = "surface_container"
+capsule_opacity      = 0.85
+capsule_border       = "outline_variant"
+capsule_border_width = 1.0
+
+[shell.panel]
+transparency_mode = "glass"
+
+[desktop_widgets]
+enabled = true
+widget_order = ["nt_clock", "nt_cal", "nt_sys"]
+
+[desktop_widgets.widget.nt_clock]
+type = "clock"
+cx = 700.0
+cy = 230.0
+[desktop_widgets.widget.nt_clock.settings]
+format = "{:%H:%M}"
+
+[desktop_widgets.widget.nt_cal]
+type = "calendar"
+cx = 1500.0
+cy = 810.0
+
+[desktop_widgets.widget.nt_sys]
+type = "sysmon"
+cx = 380.0
+cy = 880.0
